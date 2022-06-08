@@ -1,11 +1,20 @@
 const express = require('express')
-const helmet = require('helmet')
+const cors = require('cors')
+const dotenv = require('dotenv')
+
+
+const mongoose = require('mongoose');
+
 const cookieParser = require('cookie-parser')
 const sessions = require('express-session')
 
 const app = express()
+const PORT = process.env.PORT || 8000
+const webUrl = 'http://localhost:3000'; // http://localhost:8000'
+dotenv.config()
 
-app.use(helmet())
+app.use(cors({ origin: webUrl, credentials: true }));
+
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/assets'));
@@ -54,9 +63,18 @@ app.get('/logout',(req,res) => {
     res.redirect('/');
 });
 
-PORT = process.env.PORT | 3000
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Bakhti Server running at port ${PORT}`)
-})
+console.log('uri is ')
+console.log(process.env.MONGO_HOST)
 
-
+mongoose
+  .connect(process.env.MONGO_HOST, {
+    useNewUrlParser: true,
+  })
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Bahti's Server running on port: ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.log(err.message);
+  });
