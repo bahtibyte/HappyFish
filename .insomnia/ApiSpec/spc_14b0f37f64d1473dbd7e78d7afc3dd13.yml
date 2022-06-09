@@ -1,0 +1,209 @@
+_id: spc_14b0f37f64d1473dbd7e78d7afc3dd13
+type: ApiSpec
+parentId: wrk_e954046cbb064c628f2e3318fee48b95
+modified: 1654795973220
+created: 1654790193933
+fileName: HappyFishDesign
+contents: >+
+  openapi: 3.0.0
+
+  info:
+    description: "This is the HappyFish server that communicates with the RaspberryPi. The server hosts the dashboard to allow customers to configure the hardware virtually. "
+    version: 1.0.0
+    title: HappyFish
+
+   
+  tags:
+    - name: pwm
+      description: Initial step to recognize hardware
+    - name: racks
+      description: Framework holding all the shelves
+
+  paths:
+    /config/pwm:
+      post:
+        tags: 
+          - pwm
+        summary: Adds a new PWM module to the configuration
+        responses:
+          '201':
+            description: Success
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/PwmModule"
+          '400':
+            description: Unable to fullfill request
+      put:
+        tags:
+          - pwm
+        summary: Updates the name of PWM module
+        requestBody:
+          $ref: "#/components/requestBodies/NameUpdate"
+        responses:
+          '400': 
+            description: Bad Request, wrong/missing parameters
+          '201':
+            description: Success, name updated
+    "/config/pwm/{pwmId}":
+      delete:
+        tags:
+          - pwm
+        summary: Deletes the PWM module from configurations
+        parameters:
+          - name: pwmId
+            in: path
+            description: pwm ID to delete
+            required: true
+            schema:
+              type: string
+              example: 62a2133b54233ce1caebf364
+        responses:
+          '400': 
+            description: Bad Request, wrong/missing parameters
+          '200':
+            description: Successfully deleted the module
+    
+    /config/racks:
+      post:
+        tags:
+          - racks
+        summary: Adds a new Rack to the project
+        responses:
+          '201': 
+            description: Success
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/Rack"
+          '400':
+            description: Unable to fullfill request
+      put:
+        tags:
+          - racks
+        summary: Updates the Racks name
+        requestBody:
+          $ref: "#/components/requestBodies/NameUpdate"
+        responses:
+          '400': 
+            description: Bad Request, wrong/missing parameters
+          '201':
+            description: Success, name updated
+    "/config/racks/{rackId}":
+      delete:
+        tags:
+          - racks
+        summary: Deletes the Rack from configurations
+        parameters:
+          - name: rackId
+            in: path
+            description: Rack ID to delete
+            required: true
+            schema:
+              type: string
+              example: 62a2133b54233ce1caebf364
+        responses:
+          '400': 
+            description: Bad Request, wrong/missing parameters
+          '200':
+            description: Successfully deleted the Rack
+
+  components:
+    requestBodies:
+        ObjectId:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectId"
+          description: The id of the component that needs to be modified
+          required: true
+        NameUpdate:
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    description: ID corresponding to the Component
+                    type: string
+                  name:
+                    description: The new name of the Component
+                    type: string
+        DeleteComponent:
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    description: ID corresponding to the Component needed to be deleted
+                    type: string
+    schemas:
+      ObjectId:
+        type: string
+        example: 62a2131f708f6dff081ad7fd
+      PwmModule:
+        type: object
+        properties:
+          _id:
+            $ref: "#/components/schemas/ObjectId"
+          name:
+            type: string
+            example: sample pwm
+          addrs:
+            type: object
+            properties:
+              a0:
+                $ref: "#/components/schemas/ObjectId"
+              a1:
+                $ref: "#/components/schemas/ObjectId"
+              a2:
+                $ref: "#/components/schemas/ObjectId"
+              a3:
+                $ref: "#/components/schemas/ObjectId"
+              a4:
+                $ref: "#/components/schemas/ObjectId"
+              a5:
+                $ref: "#/components/schemas/ObjectId"
+              a6:
+                $ref: "#/components/schemas/ObjectId"
+              a7:
+                $ref: "#/components/schemas/ObjectId"
+              a8:
+                $ref: "#/components/schemas/ObjectId"
+              a9:
+                $ref: "#/components/schemas/ObjectId"
+              a10:
+                $ref: "#/components/schemas/ObjectId"
+              a11:
+                $ref: "#/components/schemas/ObjectId"
+              a12:
+                $ref: "#/components/schemas/ObjectId"
+              a13:
+                $ref: "#/components/schemas/ObjectId"
+              a14:
+                $ref: "#/components/schemas/ObjectId"
+              a15:
+                $ref: "#/components/schemas/ObjectId"
+      Rack:
+        type: object
+        properties:
+          _id:
+            $ref: "#/components/schemas/ObjectId"
+          name:
+            type: string
+            example: sample rack
+          shelves:
+            type: array
+            items:
+              $ref: "#/components/schemas/ObjectId"
+
+
+
+
+
+
+
+
+
+contentType: yaml
