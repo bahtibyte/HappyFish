@@ -1,7 +1,7 @@
 _id: spc_14b0f37f64d1473dbd7e78d7afc3dd13
 type: ApiSpec
 parentId: wrk_e954046cbb064c628f2e3318fee48b95
-modified: 1654795973220
+modified: 1654803878238
 created: 1654790193933
 fileName: HappyFishDesign
 contents: >+
@@ -18,6 +18,8 @@ contents: >+
       description: Initial step to recognize hardware
     - name: racks
       description: Framework holding all the shelves
+    - name: shelves
+      description: Individual shelf controlling lights
 
   paths:
     /config/pwm:
@@ -34,6 +36,7 @@ contents: >+
                   $ref: "#/components/schemas/PwmModule"
           '400':
             description: Unable to fullfill request
+    /config/pwm/name:
       put:
         tags:
           - pwm
@@ -78,6 +81,7 @@ contents: >+
                   $ref: "#/components/schemas/Rack"
           '400':
             description: Unable to fullfill request
+    /config/racks/name:
       put:
         tags:
           - racks
@@ -107,6 +111,102 @@ contents: >+
             description: Bad Request, wrong/missing parameters
           '200':
             description: Successfully deleted the Rack
+    /config/shelves:
+      post:
+        tags:
+          - shelves
+        summary: Creates a new shelf in given rack
+        parameters:
+          - name: rackId
+            in: query
+            description: Rack ID to insert new shelf
+            required: true
+            schema:
+              type: string
+              example: 62a2133b54233ce1caebf364
+        responses:
+          '400': 
+            description: Bad Request, wrong/missing parameters
+          '201':
+            description: Successfully created a new shelf
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/Shelf"
+    /config/shelves/name:
+      put:
+        tags:
+          - shelves
+        summary: Updates the name of the shelf
+        requestBody:
+          $ref: "#/components/requestBodies/NameUpdate"
+        responses:
+          '400': 
+            description: Bad Request, wrong/missing parameters
+          '201':
+            description: Success, name updated
+    /config/shelves/pwm:
+      put:
+        tags:
+          - shelves
+        summary: Attaches shelf to pwm module
+        requestBody:
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    description: ID corresponding to the Component
+                    type: string
+                  pwmId:
+                    description: The ID of the pwm module
+                    type: string
+        responses:
+          '400': 
+            description: Bad Request, wrong/missing parameters
+          '201':
+            description: Success, pwm updated
+    /config/shelves/kind:
+      put:
+        tags:
+          - shelves
+        summary: Updates what kind of shelf this is
+        requestBody:
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    description: Shelf ID that is being updated
+                    type: string
+                  kind:
+                    description: Accepted kinds (white, rgb, hybrid)
+                    type: string
+        responses:
+          '400': 
+            description: Bad Request, wrong/missing parameters
+          '201':
+            description: Success, kind updated
+    "/config/shelves/{shelfId}":
+      delete:
+        tags:
+          - shelves
+        summary: Deletes the shelf from rack
+        parameters:
+          - name: shelfId
+            in: path
+            description: Shelf ID to delete
+            required: true
+            schema:
+              type: string
+              example: 62a2133b54233ce1caebf364
+        responses:
+          '400': 
+            description: Bad Request, wrong/missing parameters
+          '200':
+            description: Successfully deleted the shelf
 
   components:
     requestBodies:
@@ -141,7 +241,6 @@ contents: >+
     schemas:
       ObjectId:
         type: string
-        example: 62a2131f708f6dff081ad7fd
       PwmModule:
         type: object
         properties:
@@ -197,13 +296,82 @@ contents: >+
             type: array
             items:
               $ref: "#/components/schemas/ObjectId"
-
-
-
-
-
-
-
-
+      Shelf:
+        type: object
+        properties:
+          _id:
+            $ref: "#/components/schemas/ObjectId"
+          name:
+            type: string
+          rackId:
+            $ref: "#/components/schemas/ObjectId"
+          pwmId:
+            $ref: "#/components/schemas/ObjectId"
+          kind:
+            type: string
+            description: describes what kind of shelf this is
+            enum:
+              - white
+              - rgb
+              - hybrid
+          white: 
+            type: object
+            description: data fields pertaining to WhiteShelf
+          rgb: 
+            type: object
+            description: data fields pertaining to RGBShelf
+          hybrid: 
+            type: object
+            description: data fields pertaining to HybridShelf
+            
+      WhiteShelf:
+        type: object
+        properties:
+          addr: 
+            type: string
+            example: a0
+          override:
+            type: boolean
+          value: 
+            type: integer
+      RGBShelf:
+        type: object
+        properties:
+          override:
+            type: boolean
+          rAddr: 
+            type: string
+            example: a0
+          gAddr: 
+            type: string
+            example: a1
+          bAddr: 
+            type: string
+            example: a2
+          rValue: 
+            type: integer
+          gValue: 
+            type: integer
+          bValue: 
+            type: integer
+      HybridShelf:
+        type: object
+        properties:
+          wAddr: 
+            type: string
+          wValue: 
+            type: integer
+          rAddr: 
+            type: string
+          rValue: 
+            type: integer
+          gAddr: 
+            type: string
+          gValue: 
+            type: integer
+          bAddr: 
+            type: string
+          bValue: 
+            type: integer
 
 contentType: yaml
