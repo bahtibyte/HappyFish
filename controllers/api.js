@@ -1,5 +1,6 @@
 const pwm = require('../models/pwmModel')
 const rack = require('../models/rackModel')
+const shelf = require('../models/shelfModel')
 
 const config = async (req, res) => {
 
@@ -20,6 +21,12 @@ const config = async (req, res) => {
         data[racks[i]._id] = racks[i]
     }
 
+    const shelves = await shelf.find()
+    for (var i = 0; i < shelves.length; i++) {
+        data[shelves[i]._id] = shelves[i]
+    }
+
+    
     return res.status(200).json(data)
 };
 

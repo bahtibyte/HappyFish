@@ -29,7 +29,7 @@ const newModule = async (req, res) => {
     })
     await newPwm.save()
     last.next = newPwm._id
-    last.save()
+    await last.save()
     
     return res.status(201).json(newPwm)
 };
@@ -47,7 +47,7 @@ const updateName = async (req, res) => {
         return res.status(400).json({'error': 'corresponding _id does not exist'})
 
     doc.name = req.body.name
-    doc.save()
+    await doc.save()
 
     return res.status(201).json(doc)
 }
@@ -64,16 +64,16 @@ const deleteModule = async (req, res) => {
         const nextDoc = await pwm.findById(doc.next)
         prevDoc.next = nextDoc._id
         nextDoc.prev = prevDoc._id
-        prevDoc.save()
-        nextDoc.save()
+        await prevDoc.save()
+        await nextDoc.save()
     } else if (!doc.prev && doc.next) {
         const nextDoc = await pwm.findById(doc.next)
         nextDoc.prev = null
-        nextDoc.save()
+        await nextDoc.save()
     } else if (!doc.next && doc.prev) {
         const prevDoc = await pwm.findById(doc.prev)
         prevDoc.next = null
-        prevDoc.save()
+        await prevDoc.save()
     } 
 
     doc.remove()

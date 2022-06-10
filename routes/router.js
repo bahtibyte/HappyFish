@@ -5,6 +5,7 @@ const authController = require('../controllers/auth')
 const apiController = require('../controllers/api') 
 const pwmController = require('../controllers/pwm') 
 const rackController = require('../controllers/rack')
+const shelfController = require('../controllers/shelf')
 
 router.get('/', authController.index)
 router.post('/login', authController.login)
@@ -23,5 +24,10 @@ router.delete('/config/pwm/:pwmId', pwmController.deleteModule)
 router.post('/config/rack', rackController.newRack)
 router.put('/config/rack/name', rackController.updateName)
 router.delete('/config/rack/:rackId', rackController.deleteRack)
+
+router.post('/config/shelf', shelfController.newShelf)
+router.put('/config/shelf/name', shelfController.updateName)
+router.put('/config/shelf/addr', shelfController.updateAddr)
+router.delete('/config/shelf/:shelfId', shelfController.deleteShelf)
 
 module.exports = router
