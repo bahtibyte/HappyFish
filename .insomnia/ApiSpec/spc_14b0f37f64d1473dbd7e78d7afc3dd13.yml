@@ -1,7 +1,7 @@
 _id: spc_14b0f37f64d1473dbd7e78d7afc3dd13
 type: ApiSpec
 parentId: wrk_e954046cbb064c628f2e3318fee48b95
-modified: 1654877665053
+modified: 1654890013617
 created: 1654790193933
 fileName: HappyFishDesign
 contents: >+
@@ -112,7 +112,7 @@ contents: >+
             description: Bad Request, wrong/missing parameters
           '200':
             description: Successfully deleted the Rack
-    /config/shelves:
+    /config/shelf:
       post:
         tags:
           - shelves
@@ -134,7 +134,7 @@ contents: >+
               application/json:
                 schema:
                   $ref: "#/components/schemas/Shelf"
-    /config/shelves/name:
+    /config/shelf/name:
       put:
         tags:
           - shelves
@@ -146,7 +146,7 @@ contents: >+
             description: Bad Request, wrong/missing parameters
           '201':
             description: Success, name updated
-    /config/shelves/pwm:
+    /config/shelf/addr:
       put:
         tags:
           - shelves
@@ -158,39 +158,36 @@ contents: >+
                 type: object
                 properties:
                   _id:
-                    description: ID corresponding to the Component
+                    description: ID corresponding to the shelf
                     type: string
-                  pwmId:
-                    description: The ID of the pwm module
+                  kind:
+                    description: The type of shelf (white, rgb, or hybrid)
                     type: string
+                  pwmIdW:
+                    description: The ID of the pwm module for white led
+                    type: string
+                  pwmIdRGB:
+                    description: The ID of the pwm module for rgb led
+                    type: string
+                  wAddr:
+                    description: pin out address for white led
+                    type: string
+                  rAddr:
+                    description: pin out address for red led
+                    type: string
+                  gAddr:
+                    description: pin out address for green led
+                    type: string
+                  bAddr:
+                    description: pin out address for blue led
+                    type: string
+                    
         responses:
           '400': 
             description: Bad Request, wrong/missing parameters
           '201':
             description: Success, pwm updated
-    /config/shelves/kind:
-      put:
-        tags:
-          - shelves
-        summary: Updates what kind of shelf this is
-        requestBody:
-          content:
-            application/x-www-form-urlencoded:
-              schema:
-                type: object
-                properties:
-                  _id:
-                    description: Shelf ID that is being updated
-                    type: string
-                  kind:
-                    description: Accepted kinds (white, rgb, hybrid)
-                    type: string
-        responses:
-          '400': 
-            description: Bad Request, wrong/missing parameters
-          '201':
-            description: Success, kind updated
-    "/config/shelves/{shelfId}":
+    "/config/shelf/{shelfId}":
       delete:
         tags:
           - shelves
@@ -319,7 +316,9 @@ contents: >+
             type: string
           rackId:
             $ref: "#/components/schemas/ObjectId"
-          pwmId:
+          pwmIdW:
+            $ref: "#/components/schemas/ObjectId"
+          pwmIdRGB:
             $ref: "#/components/schemas/ObjectId"
           kind:
             type: string
