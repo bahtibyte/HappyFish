@@ -1,4 +1,3 @@
-const mongoose = require('mongoose');
 const pwm = require('../models/pwmModel')
 
 sampleAddr = {}

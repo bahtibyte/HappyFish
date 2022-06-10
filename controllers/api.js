@@ -1,25 +1,28 @@
-const mongoose = require('mongoose');
 const pwm = require('../models/pwmModel')
+const rack = require('../models/rackModel')
 
-sampleAddr = {}
-for (var i = 0; i < 16; i++) {
-    sampleAddr['a'+i] = null
-}
+const config = async (req, res) => {
 
-const sample = async (req, res) => {
+    data = {
+        'pwms': [],
+        'racks': []
+    }
 
-    console.log('starting sample2')
-    const newPwm = new pwm({
-        name: 'sample6',
-        addrs: sampleAddr
-    })
+    const pwms = await pwm.find()
+    for (var i = 0; i < pwms.length; i++) {
+        data['pwms'].push(pwms[i]._id)
+        data[pwms[i]._id] = pwms[i]
+    }
 
-    await newPwm.save();
-    console.log('finished sample2')
+    const racks = await rack.find()
+    for (var i = 0; i < racks.length; i++) {
+        data['racks'].push(racks[i]._id)
+        data[racks[i]._id] = racks[i]
+    }
 
-    return res.status(200).json({msg: 'success'})
+    return res.status(200).json(data)
 };
 
 module.exports = {
-    sample,
+    config, 
 }
