@@ -1,7 +1,7 @@
 _id: spc_14b0f37f64d1473dbd7e78d7afc3dd13
 type: ApiSpec
 parentId: wrk_e954046cbb064c628f2e3318fee48b95
-modified: 1654803878238
+modified: 1654877665053
 created: 1654790193933
 fileName: HappyFishDesign
 contents: >+
@@ -20,6 +20,8 @@ contents: >+
       description: Framework holding all the shelves
     - name: shelves
       description: Individual shelf controlling lights
+    - name: commons
+      description: Common endpoints available
 
   paths:
     /config/pwm:
@@ -34,8 +36,7 @@ contents: >+
               application/json:
                 schema:
                   $ref: "#/components/schemas/PwmModule"
-          '400':
-            description: Unable to fullfill request
+
     /config/pwm/name:
       put:
         tags:
@@ -67,7 +68,7 @@ contents: >+
           '200':
             description: Successfully deleted the module
     
-    /config/racks:
+    /config/rack:
       post:
         tags:
           - racks
@@ -81,7 +82,7 @@ contents: >+
                   $ref: "#/components/schemas/Rack"
           '400':
             description: Unable to fullfill request
-    /config/racks/name:
+    /config/rack/name:
       put:
         tags:
           - racks
@@ -93,7 +94,7 @@ contents: >+
             description: Bad Request, wrong/missing parameters
           '201':
             description: Success, name updated
-    "/config/racks/{rackId}":
+    "/config/rack/{rackId}":
       delete:
         tags:
           - racks
@@ -207,7 +208,16 @@ contents: >+
             description: Bad Request, wrong/missing parameters
           '200':
             description: Successfully deleted the shelf
+    /api/configs:
+      get:
+        tags:
+          - commons
+        summary: Get current configuration of the system
+        responses:
+          '200':
+            description: Success
 
+        
   components:
     requestBodies:
         ObjectId:
@@ -249,6 +259,10 @@ contents: >+
           name:
             type: string
             example: sample pwm
+          next:
+            $ref: "#/components/schemas/ObjectId"
+          prev:
+            $ref: "#/components/schemas/ObjectId"
           addrs:
             type: object
             properties:
