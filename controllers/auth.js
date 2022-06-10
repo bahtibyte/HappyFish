@@ -14,6 +14,11 @@ const index = async (req, res) => {
     }
 }
 
+// TODO: add auth behind this
+const admin = async (req, res) => {
+    res.sendFile(path.resolve(__dirname, '../public/admin.html'))
+}
+
 const login = async (req, res) => {
     if (req.body.username == myusername && req.body.password == mypassword) {
         var session = req.session;
@@ -44,6 +49,7 @@ const adminAuth = async (req, res, next) => {
 
 module.exports = {
     index,
+    admin,
     login,
     logout,
     adminAuth

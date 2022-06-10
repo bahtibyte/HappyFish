@@ -9,6 +9,7 @@ const rackController = require('../controllers/rack')
 router.get('/', authController.index)
 router.post('/login', authController.login)
 router.get('/logout', authController.logout);
+router.get('/admin', authController.admin)
 
 /* forces all admin api calls to be fully authenticated */
 //router.all('/api/*', authController.adminAuth)
