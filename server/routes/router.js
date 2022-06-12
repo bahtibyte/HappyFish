@@ -1,6 +1,6 @@
-const express = require('express')
-const router = express.Router()
-const authController = require('../controllers/auth') 
+const express = require("express");
+const router = express.Router();
+const authController = require("../controllers/auth");
 
 const apiController = require('../controllers/api') 
 const pwmController = require('../controllers/pwm') 
@@ -11,6 +11,7 @@ router.get('/', authController.index)
 router.post('/login', authController.login)
 router.get('/logout', authController.logout)
 router.get('/admin', authController.admin)
+router.get('/admin2', authController.admin2)
 
 /* forces all admin api calls to be fully authenticated */
 //router.all('/api/*', authController.adminAuth)

@@ -1,19 +1,79 @@
 <html>
-<head>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <form action="/login" method="post">
-        <h2>Login</h2>
-        <div class="input-field">
-            <input type="text" name="username" id="username" placeholder="Enter Username">
-        </div>
-        <div class="input-field">
-            <input type="password" name="password" id="password" placeholder="Enter Password">
-        </div>
-        <input type="submit" value="LogIn">
-    </form>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>HappyFish Login</title>
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
+
+    <!-- Bootstrap core css -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+
+    <!-- Custom styles for this template -->
+    <link href="css/login.css" rel="stylesheet" />
+
+    <!-- External custom javascript -->
+    <script src="/js/loader.js" async></script>
+  </head>
+
+  <body>
+    <div class="container-fluid ml-5">
+      <div class="mt-4 p-5 bg-primary text-white rounded text-center">
+        <h1>Happy Fish</h1>
+      </div>
+
+      <div class="card">
+        <form class="p-5 center" action="/login" method="post">
+          <h2 class="mb-3 inline-block">
+            Login <img src="/images/fish.png" alt="" />
+          </h2>
+
+          <div></div>
+
+          <div class="form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="username"
+              id="studentRadio"
+              value="user1"
+              checked
+            />
+            <label class="form-check-label" for="studentRadio">Student</label>
+          </div>
+
+          <div class="form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="username"
+              id="adminRadio"
+              value="admin"
+            />
+            <label class="form-check-label" for="adminRadio">Admin</label>
+          </div>
+
+          <div class="mb-3">
+            <input
+              class="w-100 form-control my-2"
+              type="password"
+              name="password"
+              id="password"
+              placeholder="Enter Password"
+            />
+          </div>
+
+          <input
+            class="btn btn-primary my-2 w-100"
+            type="submit"
+            value="Login"
+          />
+        </form>
+      </div>
+    </div>
+  </body>
 </html>
-
-
