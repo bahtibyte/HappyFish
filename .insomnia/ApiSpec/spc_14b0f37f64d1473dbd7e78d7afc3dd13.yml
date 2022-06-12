@@ -1,7 +1,7 @@
 _id: spc_14b0f37f64d1473dbd7e78d7afc3dd13
 type: ApiSpec
 parentId: wrk_e954046cbb064c628f2e3318fee48b95
-modified: 1654985192428
+modified: 1655075937875
 created: 1654790193933
 fileName: HappyFishDesign
 contents: >+
@@ -49,6 +49,18 @@ contents: >+
             description: Bad Request, wrong/missing parameters
           '201':
             description: Success, name updated
+            
+    /config/pwm/resync:
+      put:
+        tags:
+          - pwm
+        summary: Notifys server to keep in mind to resync with client
+        responses:
+          '400': 
+            description: Bad Request, wrong/missing parameters
+          '201':
+            description: Success
+            
     "/config/pwm/{pwmId}":
       delete:
         tags:
@@ -205,11 +217,19 @@ contents: >+
             description: Bad Request, wrong/missing parameters
           '200':
             description: Successfully deleted the shelf
-    /api/configs:
+    /api/config:
       get:
         tags:
           - api
         summary: Get current configuration of the system
+        responses:
+          '200':
+            description: Success  
+    /api/configs/syncd:
+      put:
+        tags:
+          - api
+        summary: Client has syncd with the server
         responses:
           '200':
             description: Success
