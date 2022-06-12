@@ -1,6 +1,5 @@
 const { Schema, model} = require('mongoose')
 
-
 const pwmSchema = new Schema({
     name: String,
     next: { type: Schema.Types.ObjectId, ref: 'ObjectId' },
@@ -24,7 +23,6 @@ const pwmSchema = new Schema({
         a15: { type: Schema.Types.ObjectId, ref: 'ObjectId' }
     }
 })
-
 
 const pwm = model('pwm', pwmSchema)
 module.exports = pwm
