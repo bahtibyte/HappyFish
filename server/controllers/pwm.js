@@ -8,6 +8,9 @@ for (var i = 0; i < 16; i++) {
 const newModule = async (req, res) => {
     const all = await pwm.find()
     
+    if (all.length > 10) 
+        return res.status(400).json({'error': 'do not support more than 10 pwms'})
+
     if (all.length == 0) {
         const newPwm = new pwm({
             name: 'sample name',

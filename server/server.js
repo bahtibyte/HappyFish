@@ -6,7 +6,7 @@ const cookieParser = require('cookie-parser')
 const sessions = require('express-session')
 
 const app = express()
-const PORT = process.env.PORT || 8000
+const PORT = process.env.PORT || 8080
 const webUrl = 'http://localhost:3000'; 
 dotenv.config()
 
