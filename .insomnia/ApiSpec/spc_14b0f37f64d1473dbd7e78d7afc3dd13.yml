@@ -1,7 +1,7 @@
 _id: spc_14b0f37f64d1473dbd7e78d7afc3dd13
 type: ApiSpec
 parentId: wrk_e954046cbb064c628f2e3318fee48b95
-modified: 1654890013617
+modified: 1654985192428
 created: 1654790193933
 fileName: HappyFishDesign
 contents: >+
@@ -20,8 +20,8 @@ contents: >+
       description: Framework holding all the shelves
     - name: shelves
       description: Individual shelf controlling lights
-    - name: commons
-      description: Common endpoints available
+    - name: api
+      description: Endpoints to interact with shelves
 
   paths:
     /config/pwm:
@@ -208,13 +208,64 @@ contents: >+
     /api/configs:
       get:
         tags:
-          - commons
+          - api
         summary: Get current configuration of the system
         responses:
           '200':
             description: Success
-
-        
+    /api/shelf/mode:
+      put:
+        tags:
+          - api
+        summary: Changes the mode of the shelf
+        requestBody:
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    description: ID corresponding to the shelf
+                    type: string
+                  mode:
+                    description: The new mode for shelf
+                    type: number
+        responses:
+          '400':
+            description: Bad Request, wrong/missing parameters
+          '201':
+            description: Success
+    /api/shelf/value:
+      put:
+        tags:
+          - api
+        summary: Changes the light value of the shelf
+        requestBody:
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    description: ID corresponding to the shelf
+                    type: string
+                  wValue:
+                    description: The value for white shelf (if kind is white)
+                    type: number
+                  rValue:
+                    description: The value for red signal (if kind is rgb)
+                    type: number
+                  gValue:
+                    description: The value for green signal (if kind is rgb)
+                    type: number
+                  bValue:
+                    description: The value for blue signal (if kind is rgb)
+                    type: number
+        responses:
+          '400':
+            description: Bad Request, wrong/missing parameters
+          '201':
+            description: Success
   components:
     requestBodies:
         ObjectId:
