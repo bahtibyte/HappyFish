@@ -41,8 +41,31 @@ const adminAuth = async (req, res, next) => {
     const session = req.session;
 
     if (!session.userid || session.userid != 'admin') {
-        return res.status(401).json({errorMessage: 'Unauthorized'})
+        //return res.status(401).json({'error': 'Unauthorized'})
     }
+
+    next();
+}
+
+const dashboard = async (req, res, next) => {
+    const session = req.session;
+
+    if (!session.userid || session.userid != 'admin' || session.userid != 'student') {
+        //return res.status(401).json({'error': 'Unauthorized'})
+    }
+
+    next();
+}
+
+const clientAuth = async (req, res, next) => {
+    
+    authorization = req.headers['authorization']
+
+    if (authorization == undefined)
+        return res.status(401).json({'error': 'missing authorization'})
+
+    if (authorization.split(' ')[1] != 'TEMPPASSWORD')
+        return res.status(401).json({'error': 'admin password incorrect'})
 
     next();
 }
@@ -52,5 +75,7 @@ module.exports = {
     admin,
     login,
     logout,
-    adminAuth
+    dashboard,
+    adminAuth,
+    clientAuth
 };

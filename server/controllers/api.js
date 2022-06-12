@@ -1,6 +1,7 @@
 const pwm = require('../models/pwmModel')
 const rack = require('../models/rackModel')
 const shelf = require('../models/shelfModel')
+const sync = require('../models/syncModel')
 
 const config = async (req, res) => {
 
@@ -26,9 +27,31 @@ const config = async (req, res) => {
         data[shelves[i]._id] = shelves[i]
     }
 
+    const syncs = await sync.find()
+    if (syncs.length == 0) {
+        data['sync'] = true
+    }else{
+        data['sync'] = syncs[0].sync
+    }
+
     return res.status(200).json(data)
 };
 
+const syncdNotify = async (req, res) => {
+
+    const docs = await sync.find()
+
+    if (docs.length == 0) {
+        const newSync = new sync({sync: false})
+        await newSync.save();
+        return res.status(201).json(newSync)
+    }
+
+    const doc = docs[0]
+    doc.sync = false
+    await doc.save()
+    return res.status(201).json(doc)
+}
 
 const modeChange = async (req, res) => {
 
@@ -137,6 +160,7 @@ const valueChange = async (req, res) => {
 
 module.exports = {
     config, 
+    syncdNotify,
     modeChange,
     valueChange
 }

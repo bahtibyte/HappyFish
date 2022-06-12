@@ -1,8 +1,24 @@
 const pwm = require('../models/pwmModel')
+const sync = require('../models/syncModel')
 
 sampleAddr = {}
 for (var i = 0; i < 16; i++) {
     sampleAddr['a'+i] = null
+}
+
+const resync = async(req, res) => {
+    const docs = await sync.find()
+
+    if (docs.length == 0) {
+        const newSync = new sync({sync: true})
+        await newSync.save();
+        return res.status(201).json(newSync)
+    }
+
+    const doc = docs[0]
+    doc.sync = true
+    await doc.save()
+    return res.status(201).json(doc)
 }
 
 const newModule = async (req, res) => {
@@ -87,5 +103,6 @@ const deleteModule = async (req, res) => {
 module.exports = {
     newModule,
     updateName,
-    deleteModule
+    deleteModule,
+    resync
 }
