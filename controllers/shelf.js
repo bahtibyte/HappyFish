@@ -140,7 +140,7 @@ const deleteShelf = async (req, res) => {
 
     doc.remove()
 
-    return res.status(201).json({doc})
+    return res.status(200).json({doc})
 }
 
 module.exports = {
