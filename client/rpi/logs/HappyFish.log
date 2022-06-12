@@ -1,0 +1,61 @@
+06-12-22 18:15:15 [schedule.py     29          __init__()] INFO     Sunrise is set to 07:00. Sunset is set to 19:00
+06-12-22 18:15:15 [schedule.py     30          __init__()] INFO     Duration of each stage is set to 30 minutes
+06-12-22 18:15:15 [schedule.py     33          __init__()] DEBUG    Initialization stage 'Day-Time'
+06-12-22 18:17:49 [schedule.py     29          __init__()] INFO     Sunrise is set to 07:00. Sunset is set to 19:00
+06-12-22 18:17:49 [schedule.py     30          __init__()] INFO     Duration of each stage is set to 30 minutes
+06-12-22 18:17:49 [schedule.py     33          __init__()] DEBUG    Initialization stage 'Day-Time'
+06-12-22 18:19:15 [main.py         25          <module>()] INFO     Starting main.py
+06-12-22 18:19:15 [schedule.py     29          __init__()] INFO     Sunrise is set to 07:00. Sunset is set to 19:00
+06-12-22 18:19:15 [schedule.py     30          __init__()] INFO     Duration of each stage is set to 30 minutes
+06-12-22 18:19:15 [schedule.py     33          __init__()] DEBUG    Initialization stage 'Day-Time'
+06-12-22 18:19:15 [main.py         33          <module>()] ERROR    UNABLE TO INITIALIZE PWM MODULES
+06-12-22 18:19:15 [main.py         35          <module>()] INFO     Terminating main.py
+06-12-22 18:20:41 [main.py         25          <module>()] INFO     Starting main.py
+06-12-22 18:20:41 [schedule.py     29          __init__()] INFO     Sunrise is set to 07:00. Sunset is set to 18:19
+06-12-22 18:20:41 [schedule.py     30          __init__()] INFO     Duration of each stage is set to 30 minutes
+06-12-22 18:20:41 [schedule.py     33          __init__()] DEBUG    Initialization stage 'Sun-Set'
+06-12-22 18:20:42 [main.py         33          <module>()] ERROR    UNABLE TO INITIALIZE PWM MODULES
+06-12-22 18:20:42 [main.py         35          <module>()] INFO     Terminating main.py
+06-12-22 18:20:58 [main.py         25          <module>()] INFO     Starting main.py
+06-12-22 18:20:58 [schedule.py     29          __init__()] INFO     Sunrise is set to 07:00. Sunset is set to 16:00
+06-12-22 18:20:58 [schedule.py     30          __init__()] INFO     Duration of each stage is set to 30 minutes
+06-12-22 18:20:58 [schedule.py     33          __init__()] DEBUG    Initialization stage 'POST Sun-Set'
+06-12-22 18:20:59 [main.py         33          <module>()] ERROR    UNABLE TO INITIALIZE PWM MODULES
+06-12-22 18:20:59 [main.py         35          <module>()] INFO     Terminating main.py
+06-12-22 18:21:07 [main.py         25          <module>()] INFO     Starting main.py
+06-12-22 18:21:07 [schedule.py     29          __init__()] INFO     Sunrise is set to 07:00. Sunset is set to 19:00
+06-12-22 18:21:07 [schedule.py     30          __init__()] INFO     Duration of each stage is set to 30 minutes
+06-12-22 18:21:07 [schedule.py     33          __init__()] DEBUG    Initialization stage 'Day-Time'
+06-12-22 18:21:07 [main.py         33          <module>()] ERROR    UNABLE TO INITIALIZE PWM MODULES
+06-12-22 18:21:07 [main.py         35          <module>()] INFO     Terminating main.py
+06-12-22 18:21:52 [main.py         25          <module>()] INFO     Starting main.py
+06-12-22 18:21:57 [main.py         25          <module>()] INFO     Starting main.py
+06-12-22 18:21:57 [schedule.py     29          __init__()] INFO     Sunrise is set to 07:00. Sunset is set to 19:00
+06-12-22 18:21:57 [schedule.py     30          __init__()] INFO     Duration of each stage is set to 30 minutes
+06-12-22 18:21:57 [schedule.py     33          __init__()] DEBUG    Initialization stage 'Day-Time'
+06-12-22 18:21:57 [main.py         34          <module>()] ERROR    UNABLE TO INITIALIZE PWM MODULES
+06-12-22 18:21:57 [main.py         36          <module>()] INFO     Terminating main.py
+06-12-22 18:23:00 [main.py         25          <module>()] INFO     Starting main.py
+06-12-22 18:23:00 [happyfish.py    9           __init__()] INFO     Initializing HappyFish
+06-12-22 18:23:00 [schedule.py     29          __init__()] INFO     Sunrise is set to 07:00. Sunset is set to 19:00
+06-12-22 18:23:00 [schedule.py     30          __init__()] INFO     Duration of each stage is set to 30 minutes
+06-12-22 18:23:00 [schedule.py     33          __init__()] DEBUG    Initialization stage 'Day-Time'
+06-12-22 18:23:01 [main.py         34          <module>()] ERROR    UNABLE TO INITIALIZE PWM MODULES
+06-12-22 18:23:01 [main.py         36          <module>()] INFO     Terminating main.py
+06-12-22 18:23:14 [main.py         25          <module>()] INFO     Starting main.py
+06-12-22 18:23:14 [happyfish.py    9           __init__()] INFO     Initializing HappyFish
+06-12-22 18:23:14 [schedule.py     29          __init__()] INFO     Sunrise is set to 07:00. Sunset is set to 19:00
+06-12-22 18:23:14 [schedule.py     30          __init__()] INFO     Duration of each stage is set to 30 minutes
+06-12-22 18:23:14 [schedule.py     33          __init__()] DEBUG    Initialization stage 'Day-Time'
+06-12-22 18:23:14 [happyfish.py    21             start()] INFO     Starting HappyFish client. Server:https://happy-fish.herokuapp.com
+06-12-22 18:23:14 [main.py         34          <module>()] ERROR    UNABLE TO INITIALIZE PWM MODULES
+06-12-22 18:23:14 [main.py         36          <module>()] INFO     Terminating main.py
+06-12-22 18:23:55 [main.py         25          <module>()] INFO     Starting main.py
+06-12-22 18:23:55 [happyfish.py    9           __init__()] INFO     Initializing HappyFish
+06-12-22 18:23:55 [schedule.py     29          __init__()] INFO     Sunrise is set to 07:00. Sunset is set to 19:00
+06-12-22 18:23:55 [schedule.py     30          __init__()] INFO     Duration of each stage is set to 30 minutes
+06-12-22 18:23:55 [schedule.py     33          __init__()] DEBUG    Initialization stage 'Day-Time'
+06-12-22 18:23:55 [happyfish.py    21             start()] INFO     Starting HappyFish client. Server:https://happy-fish.herokuapp.com
+06-12-22 18:23:55 [happyfish.py    28             start()] INFO     Loaded initial configurations
+06-12-22 18:23:55 [main.py         34          <module>()] ERROR    UNABLE TO INITIALIZE PWM MODULES
+06-12-22 18:23:55 [main.py         36          <module>()] INFO     Terminating main.py
