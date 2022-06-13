@@ -19,6 +19,7 @@ router.get('/admin2', authController.admin2)
 
 router.post('/config/pwm', pwmController.newModule)
 router.put('/config/pwm/name', pwmController.updateName)
+router.put('/config/pwm/dc', shelfController.dcShelf)
 router.delete('/config/pwm/:pwmId', pwmController.deleteModule)
 
 router.post('/config/rack', rackController.newRack)

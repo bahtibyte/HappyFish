@@ -126,7 +126,26 @@ const updateAddr = async (req, res) => {
     return res.status(201).json(doc)
 }
 
+const dcShelf = async (req, res) => {
+
+    if (!req.body.shelfId) 
+        return res.status(400).json({'error': 'missing shelfId in paramters'})
+    
+    const doc = await shelf.findById(req.body.shelfId)
+
+    if (!doc)
+        return res.status(400).json({'error': 'corresponding shelfId does not exist'})
+
+    await clearAddr(doc)
+    doc.kind = 'tbd'
+    await doc.save()
+    return res.status(201).json(doc)
+}
+
 const deleteShelf = async (req, res) => {
+    if (!req.params.shelfId) 
+        return res.status(400).json({'error': 'missing shelfId in paramters'})
+
     const doc = await shelf.findById(req.params.shelfId)
 
     if (!doc)
@@ -147,5 +166,6 @@ module.exports = {
     newShelf,
     updateName,
     updateAddr,
+    dcShelf,
     deleteShelf
 }

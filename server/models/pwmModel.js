@@ -2,8 +2,6 @@ const { Schema, model} = require('mongoose')
 
 const pwmSchema = new Schema({
     name: String,
-    next: { type: Schema.Types.ObjectId, ref: 'ObjectId' },
-    prev: { type: Schema.Types.ObjectId, ref: 'ObjectId' },
     addrs: {
         a0: { type: Schema.Types.ObjectId, ref: 'ObjectId' }, 
         a1: { type: Schema.Types.ObjectId, ref: 'ObjectId' }, 
