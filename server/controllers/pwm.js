@@ -27,28 +27,12 @@ const newModule = async (req, res) => {
     if (all.length > 10) 
         return res.status(400).json({'error': 'do not support more than 10 pwms'})
 
-    if (all.length == 0) {
-        const newPwm = new pwm({
-            name: 'sample name',
-            next: null,
-            prev: null,
-            addrs: sampleAddr
-        })
-        await newPwm.save();
-        return res.status(201).json(newPwm)
-    }
-
-    const last = all[all.length-1]
-
     const newPwm = new pwm({
         name: 'sample name',
-        next: null,
-        prev: last._id,
         addrs: sampleAddr
     })
+
     await newPwm.save()
-    last.next = newPwm._id
-    await last.save()
     
     return res.status(201).json(newPwm)
 };
@@ -78,24 +62,14 @@ const deleteModule = async (req, res) => {
     if (!doc)
         return res.status(400).json({'error': 'corresponding pwmId does not exist'})
 
-    if (doc.prev && doc.next) {
-        const prevDoc = await pwm.findById(doc.prev)
-        const nextDoc = await pwm.findById(doc.next)
-        prevDoc.next = nextDoc._id
-        nextDoc.prev = prevDoc._id
-        await prevDoc.save()
-        await nextDoc.save()
-    } else if (!doc.prev && doc.next) {
-        const nextDoc = await pwm.findById(doc.next)
-        nextDoc.prev = null
-        await nextDoc.save()
-    } else if (!doc.next && doc.prev) {
-        const prevDoc = await pwm.findById(doc.prev)
-        prevDoc.next = null
-        await prevDoc.save()
-    } 
+    const addrs = doc.addrs
+    for (var i = 0; i < 16; i++) {
+        if (addrs['a' + i] != null) {
+            return res.status(400).json({'error': 'pwm module has shelf connected. disconnect all shelves before deleting'})
+        }
+    }
 
-    doc.remove()
+    await doc.remove()
 
     return res.status(201).json({doc})
 }

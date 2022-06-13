@@ -1,6 +1,6 @@
-const express = require('express')
-const router = express.Router()
-const authController = require('../controllers/auth') 
+const express = require("express");
+const router = express.Router();
+const authController = require("../controllers/auth");
 
 const apiController = require('../controllers/api') 
 const pwmController = require('../controllers/pwm') 
@@ -23,6 +23,7 @@ router.all('/config/*', authController.adminAuth)
 /* Admin interaction with PWM module */
 router.post('/config/pwm', pwmController.newModule)
 router.put('/config/pwm/name', pwmController.updateName)
+router.put('/config/pwm/dc', shelfController.dcShelf)
 router.put('/config/pwm/resync', pwmController.resync)
 router.delete('/config/pwm/:pwmId', pwmController.deleteModule)
 
