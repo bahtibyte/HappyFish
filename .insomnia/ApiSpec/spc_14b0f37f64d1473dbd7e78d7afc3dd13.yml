@@ -1,7 +1,7 @@
 _id: spc_14b0f37f64d1473dbd7e78d7afc3dd13
 type: ApiSpec
 parentId: wrk_e954046cbb064c628f2e3318fee48b95
-modified: 1655075937875
+modified: 1655139958790
 created: 1654790193933
 fileName: HappyFishDesign
 contents: >+
@@ -36,31 +36,57 @@ contents: >+
               application/json:
                 schema:
                   $ref: "#/components/schemas/PwmModule"
-
     /config/pwm/name:
       put:
         tags:
           - pwm
         summary: Updates the name of PWM module
-        requestBody:
-          $ref: "#/components/requestBodies/NameUpdate"
+        parameters:
+          - name: _id
+            in: query
+            description: pwm id 
+            required: true
+            schema:
+              type: string
+              example: 62a2133b54233ce1caebf364
+          - name: name
+            in: query
+            description: new name the pwm should change to
+            required: true
+            schema:
+              type: string
+              example: white pwm module
         responses:
           '400': 
             description: Bad Request, wrong/missing parameters
           '201':
             description: Success, name updated
-            
-    /config/pwm/resync:
+    /config/pwm/dc:
       put:
         tags:
           - pwm
-        summary: Notifys server to keep in mind to resync with client
+        summary: Disconnects given shelf id from all pwm modules
+        parameters:
+          - name: shelfId
+            in: query
+            description: shelf to disconnect
+            required: true
+            schema:
+              type: string
+              example: 62a2133b54233ce1caebf364
         responses:
           '400': 
             description: Bad Request, wrong/missing parameters
           '201':
-            description: Success
-            
+            description: Success, disconnected shelf
+    /config/pwm/resync:
+      put:
+        tags:
+          - pwm
+        summary: Notify client that hardware needs to be resyncd
+        responses:
+          '201':
+            description: Success, name updated
     "/config/pwm/{pwmId}":
       delete:
         tags:
@@ -99,8 +125,21 @@ contents: >+
         tags:
           - racks
         summary: Updates the Racks name
-        requestBody:
-          $ref: "#/components/requestBodies/NameUpdate"
+        parameters:
+          - name: _id
+            in: query
+            description: rack id 
+            required: true
+            schema:
+              type: string
+              example: 62a2133b54233ce1caebf364
+          - name: name
+            in: query
+            description: new name the rack should change to
+            required: true
+            schema:
+              type: string
+              example: first rack
         responses:
           '400': 
             description: Bad Request, wrong/missing parameters
@@ -151,8 +190,21 @@ contents: >+
         tags:
           - shelves
         summary: Updates the name of the shelf
-        requestBody:
-          $ref: "#/components/requestBodies/NameUpdate"
+        parameters:
+          - name: _id
+            in: query
+            description: shelf id 
+            required: true
+            schema:
+              type: string
+              example: 62a2133b54233ce1caebf364
+          - name: name
+            in: query
+            description: new name the shelf should change to
+            required: true
+            schema:
+              type: string
+              example: top shelf
         responses:
           '400': 
             description: Bad Request, wrong/missing parameters
@@ -163,37 +215,57 @@ contents: >+
         tags:
           - shelves
         summary: Attaches shelf to pwm module
-        requestBody:
-          content:
-            application/x-www-form-urlencoded:
-              schema:
-                type: object
-                properties:
-                  _id:
-                    description: ID corresponding to the shelf
-                    type: string
-                  kind:
-                    description: The type of shelf (white, rgb, or hybrid)
-                    type: string
-                  pwmIdW:
-                    description: The ID of the pwm module for white led
-                    type: string
-                  pwmIdRGB:
-                    description: The ID of the pwm module for rgb led
-                    type: string
-                  wAddr:
-                    description: pin out address for white led
-                    type: string
-                  rAddr:
-                    description: pin out address for red led
-                    type: string
-                  gAddr:
-                    description: pin out address for green led
-                    type: string
-                  bAddr:
-                    description: pin out address for blue led
-                    type: string
-                    
+        parameters:
+          - name: _id
+            in: query
+            description: ID corresponding to the shelf
+            required: true
+            schema:
+              type: string
+              example: 62a2133b54233ce1caebf364
+          - name: kind
+            in: query
+            description: the type of shelf (white, rgb, or hybrid)
+            required: true
+            schema:
+              type: string
+              example: hybrid
+          - name: pwmIdW
+            in: query
+            description: the ID of the pwm module for white led
+            schema:
+              type: string
+              example: 62a695cdf254c305e53c60f1
+          - name: wAddr
+            in: query
+            description: pin out address for white led
+            schema:
+              type: string
+              example: a3
+          - name: pwmIdRGB
+            in: query
+            description: the ID of the pwm module for rgb led
+            schema:
+              type: string
+              example: 62a697bb3e34331170349d97
+          - name: rAddr
+            in: query
+            description: pin out address for red led
+            schema:
+              type: string
+              example: a11
+          - name: gAddr
+            in: query
+            description: pin out address for green led
+            schema:
+              type: string
+              example: a12
+          - name: bAddr
+            in: query
+            description: pin out address for blue led
+            schema:
+              type: string
+              example: a13
         responses:
           '400': 
             description: Bad Request, wrong/missing parameters
@@ -217,19 +289,11 @@ contents: >+
             description: Bad Request, wrong/missing parameters
           '200':
             description: Successfully deleted the shelf
-    /api/config:
+    /api/configs:
       get:
         tags:
           - api
         summary: Get current configuration of the system
-        responses:
-          '200':
-            description: Success  
-    /api/configs/syncd:
-      put:
-        tags:
-          - api
-        summary: Client has syncd with the server
         responses:
           '200':
             description: Success
@@ -238,18 +302,21 @@ contents: >+
         tags:
           - api
         summary: Changes the mode of the shelf
-        requestBody:
-          content:
-            application/x-www-form-urlencoded:
-              schema:
-                type: object
-                properties:
-                  _id:
-                    description: ID corresponding to the shelf
-                    type: string
-                  mode:
-                    description: The new mode for shelf
-                    type: number
+        parameters:
+          - name: _id
+            in: query
+            description: shelf id 
+            required: true
+            schema:
+              type: string
+              example: 62a2133b54233ce1caebf364
+          - name: mode
+            in: query
+            description: the new mode this shelf should change to 
+            required: true
+            schema:
+              type: string
+              example: '1'
         responses:
           '400':
             description: Bad Request, wrong/missing parameters
@@ -260,30 +327,49 @@ contents: >+
         tags:
           - api
         summary: Changes the light value of the shelf
-        requestBody:
-          content:
-            application/x-www-form-urlencoded:
-              schema:
-                type: object
-                properties:
-                  _id:
-                    description: ID corresponding to the shelf
-                    type: string
-                  wValue:
-                    description: The value for white shelf (if kind is white)
-                    type: number
-                  rValue:
-                    description: The value for red signal (if kind is rgb)
-                    type: number
-                  gValue:
-                    description: The value for green signal (if kind is rgb)
-                    type: number
-                  bValue:
-                    description: The value for blue signal (if kind is rgb)
-                    type: number
+        parameters:
+          - name: _id
+            in: query
+            description: ID corresponding to the shelf
+            required: true
+            schema:
+              type: string
+              example: 62a2133b54233ce1caebf364
+          - name: wValue
+            in: query
+            description: the value for white shelf (if kind is white)
+            schema:
+              type: string
+              example: '100'
+          - name: rValue
+            in: query
+            description: the value for red signal (if kind is rgb)
+            schema:
+              type: string
+              example: '255'
+          - name: gValue
+            in: query
+            description: the value for green signal (if kind is rgb)
+            schema:
+              type: string
+              example: '255'
+          - name: bValue
+            in: query
+            description: the value for blue signal (if kind is rgb)
+            schema:
+              type: string
+              example: '255'       
         responses:
           '400':
             description: Bad Request, wrong/missing parameters
+          '201':
+            description: Success
+    /api/config/syncd:
+      put:
+        tags:
+          - api
+        summary: Notify server that client has resyncd
+        responses:
           '201':
             description: Success
   components:
