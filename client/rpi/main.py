@@ -30,10 +30,10 @@ hf.start()
 if hf.CANT_START:
     logger.error('INITIAL SERVER REQUEST UNRESPONSIVE')
 
-if hf.BAD_CONFIG:
+elif hf.BAD_CONFIG:
     logger.error('UNABLE TO INITIALIZE PWM MODULES')
 
-if hf.REFRESH:
+elif hf.REFRESH:
     logger.info('CLIENT CONFIGURATION REFRESH REQUESTED')
 
 logger.info('Terminating main.py')
