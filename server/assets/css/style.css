@@ -1,0 +1,23 @@
+
+
+.root {
+    background-color: white;
+}
+
+.addr-line {
+    width: 100%;
+    display: inline-block;
+    overflow: auto;
+    white-space: nowrap;
+    margin:0px auto;
+    vertical-align: middle;
+}
+
+.racks {
+
+    background-color: red;
+
+
+}
+
+

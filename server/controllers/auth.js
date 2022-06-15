@@ -23,6 +23,10 @@ const admin2 = async (req, res) => {
     res.sendFile(path.resolve(__dirname, '../public/admin2.html'))
 }
 
+const admin3 = async (req, res) => {
+    res.sendFile(path.resolve(__dirname, '../public/admin3.html'))
+}
+
 const login = async (req, res) => {
   if (req.body.username == myusername && req.body.password == mypassword) {
     var session = req.session;
@@ -81,5 +85,6 @@ module.exports = {
     logout,
     dashboard,
     adminAuth,
-    clientAuth
+    clientAuth,
+    admin3
 };
