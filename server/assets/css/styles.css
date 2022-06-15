@@ -2,6 +2,19 @@ body {
   background-color: #878787;
 }
 
-.navbar-color{
-    background-color: #878787;
+.navbar-color {
+  background-color: #878787;
+}
+
+.maxWidth-400px {
+  max-width: 400px;
+}
+
+/* styling for a pwm card*/
+.pwm.card {
+  max-width: 350px;
+}
+
+.card-title {
+  text-decoration: underline;
 }

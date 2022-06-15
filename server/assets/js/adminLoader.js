@@ -3,6 +3,8 @@ let pwms = null;
 let pwm = null;
 let addresses = null;
 
+let racks = [];
+
 const pwmCards = [];
 const mainContainer = document.querySelector("#root");
 
@@ -64,6 +66,9 @@ function getNavbar() {
 //
 function getMainContainer() {}
 
+
+//---------------PWM Section-----------------
+
 //returns the entire pwm section
 //pwms: array of strings where each string is the id of a pwm
 //*passing config as parameter now because not sure if async will cause problems as global
@@ -98,11 +103,12 @@ function getPwmSection(pwms, config) {
   return elementFromHtml(html);
 }
 
-//returns a pwm card from the pwms array
+//returns a pwmDiv card from the pwms array
 //edit button has onclick that calls changeToEdit(event)
+//**if changing order of card title - make sure to change it for changeToEdit() and save() **
 function getPwmDiv(pwm) {
   let html = "";
-  html += `<div class="card col-md m-3" id="pwmCard-${pwm._id}">
+  html += `<div class="pwm card col-md m-3" id="pwmCard-${pwm._id}">
               <div class="card-body text-center">
                 <h5 class="card-title">Name: ${pwm.name}</h5>
                   </div>
@@ -110,7 +116,7 @@ function getPwmDiv(pwm) {
 
   html += getPwmLineList(pwm.addrs).innerHTML;
 
-  html += ` <div class="container mt-2">
+  html += ` <div class="container my-2">
               <button 
                 class="btn-primary"
                 onclick="changeToEdit(event)"
@@ -121,13 +127,15 @@ function getPwmDiv(pwm) {
   return elementFromHtml(html);
 }
 
+//returns a div contining the list of addresses and their status
+//numberLinesPerCard decides the grouping number
 function getPwmLineList(addresses) {
   const numberOfLinesPerCard = 4;
   let html = "";
   for (i = 0; i < 16; i++) {
     if (i % numberOfLinesPerCard == 0) {
       let name = Math.floor(i / numberOfLinesPerCard);
-      html += `<div class="border border-primary" name="pwmListCard-${name}">
+      html += `<div class="border border-2 border-secondary rounded-3 mb-2" name="pwmListCard-${name}">
         <ul class="list-group list-group-flush">`;
     }
 
@@ -144,24 +152,25 @@ function getPwmLineList(addresses) {
   return elementFromHtml(html);
 }
 
-//id -> 0-15
+//returns a li containing a list address and its status
+//pwm address id ranges in value from -> 0-15
 //status is the value of the pwm
 function getPwmLine(id, status) {
   if (id === null || typeof id !== "string") return "Error input";
   let output = status === null ? "no connection" : status;
   let color = status === null ? "text-danger" : "text-success";
-  // if (edit) {
-  //   return elementFromHtml(`<li class="list-group-item">${id}: ${output}</li>`);
-  // } else {
+
   return elementFromHtml(
-    `<li class="list-group-item">${id.substring(
-      1
-    )}: <span class = "${color}">${output}</span></li>`
+    `<li class="list-group-item py-1">
+      ${id.substring(1)}: <span class = "${color}">${output}</span>
+    </li>`
   );
-  //}
 }
 
-//Functionality
+
+//-------PWM Functionality-----
+
+//changes a button card to edit mode if edit button is pressed 
 function changeToEdit(event) {
   console.log("clicked");
   let currentButton = event.currentTarget;
@@ -302,3 +311,6 @@ function rerenderPwmSection() {
     })
     .catch((err) => console.error(err));
 }
+
+
+//----------------shelves------------------------
