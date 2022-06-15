@@ -4,37 +4,43 @@ const shelf = require('../models/shelfModel')
 const sync = require('../models/syncModel')
 
 const config = async (req, res) => {
+    try {
+        console.log('Config requested')
+        
+        data = {
+            'pwms': [],
+            'racks': []
+        }
 
-    data = {
-        'pwms': [],
-        'racks': []
+        const pwms = await pwm.find()
+        for (var i = 0; i < pwms.length; i++) {
+            data['pwms'].push(pwms[i]._id)
+            data[pwms[i]._id] = pwms[i]
+        }
+
+        const racks = await rack.find()
+        for (var i = 0; i < racks.length; i++) {
+            data['racks'].push(racks[i]._id)
+            data[racks[i]._id] = racks[i]
+        }
+
+        const shelves = await shelf.find()
+        for (var i = 0; i < shelves.length; i++) {
+            data[shelves[i]._id] = shelves[i]
+        }
+
+        const syncs = await sync.find()
+        if (syncs.length == 0) {
+            data['sync'] = true
+        }else{
+            data['sync'] = syncs[0].sync
+        }
+
+        return res.status(200).json(data)
+    } catch (error) {
+        console.log(error)
+        return res.status(400).json({'error': 'exception thrown'})
     }
-
-    const pwms = await pwm.find()
-    for (var i = 0; i < pwms.length; i++) {
-        data['pwms'].push(pwms[i]._id)
-        data[pwms[i]._id] = pwms[i]
-    }
-
-    const racks = await rack.find()
-    for (var i = 0; i < racks.length; i++) {
-        data['racks'].push(racks[i]._id)
-        data[racks[i]._id] = racks[i]
-    }
-
-    const shelves = await shelf.find()
-    for (var i = 0; i < shelves.length; i++) {
-        data[shelves[i]._id] = shelves[i]
-    }
-
-    const syncs = await sync.find()
-    if (syncs.length == 0) {
-        data['sync'] = true
-    }else{
-        data['sync'] = syncs[0].sync
-    }
-
-    return res.status(200).json(data)
 };
 
 const syncdNotify = async (req, res) => {

@@ -3,18 +3,15 @@ var last_config;
 const loadPwms = function() {
     fetch('/api/config', { method: 'GET' })
         .then(response => response.json())
-        .then(response => load(response))
+        .then(config => {
+            const pwms = config['pwms']
+            for (var i = 0; i < pwms.length; i++) {
+                const root = create_pwm(i, config[pwms[i]], config)
+                pwm_div.appendChild(root)
+            }
+            last_config = config
+        })
         .catch(err => alert('unable to load configs '+err));
-}
-
-const load = function(config) {
-    console.log(config)
-    const pwms = config['pwms']
-    for (var i = 0; i < pwms.length; i++) {
-        const root = create_pwm(i, config[pwms[i]], config)
-        pwm_div.appendChild(root)
-    }
-    last_config = config
 }
 
 const newPwm = function() {
@@ -36,7 +33,7 @@ const loadNewPwm = function(pwm) {
     
     /* rerenders the admin dashboard */
     document.getElementById('root').removeChild(top_div)
-    document.getElementById('root').insertBefore(top_div, rack_div)
+    document.getElementById('root').insertBefore(top_div, bot_div)
     return false;
 }
 
@@ -109,7 +106,6 @@ const create_pwm = function(pI, pwm, config) {
   
     const options_div = document.createElement('div')
     options_div.setAttribute('id', pwmId+'-options-div')
-    options_div.setAttribute('style', 'background-color: green')
 
     const edit_btn = document.createElement('button')
     edit_btn.setAttribute('class', 'btn btn-warning')

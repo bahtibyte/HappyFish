@@ -13,11 +13,11 @@
     vertical-align: middle;
 }
 
-.racks {
-
-    background-color: red;
-
-
+.unconfigured {
+    margin-bottom: 0rem;
+    text-align: center;
+    color: red;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
-
 
