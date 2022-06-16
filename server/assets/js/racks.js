@@ -74,7 +74,7 @@ const create_rack = function(rack, config) {
     edit_btn.setAttribute('class', 'btn btn-warning')
     edit_btn.setAttribute('style', 'float: right')
     edit_btn.setAttribute('id', rackId+'-edit-btn')
-    edit_btn.onclick = function() { editRack(rack) }
+    edit_btn.onclick = function() { editRack(rack, config) }
     edit_btn.innerHTML = 'Edit'
     options_div.appendChild(edit_btn)
 
@@ -82,7 +82,7 @@ const create_rack = function(rack, config) {
     add_btn.setAttribute('class', 'btn btn-primary')
     add_btn.setAttribute('style', 'float: left')
     add_btn.setAttribute('id', rackId+'-add-btn')
-    add_btn.onclick = function() { addNewShelf(rackId, body, options_div) }
+    add_btn.onclick = function() { addNewShelf(rack, config, body, options_div) }
     add_btn.innerHTML = '+ Shelf'
     options_div.appendChild(add_btn)
 
@@ -147,7 +147,7 @@ const create_shelf = function(shelf) {
     const configure_btn = document.createElement('button')
     configure_btn.setAttribute('class', 'btn btn-link')
     configure_btn.setAttribute('style', 'float: right;')
-    configure_btn.setAttribute('id', shelfId+'-edit-btn')
+    configure_btn.setAttribute('id', shelfId+'-configure-btn')
     configure_btn.onclick = function() { alert('configure shelf') }
     configure_btn.innerHTML = 'Configure'
     options_div.appendChild(configure_btn)
@@ -196,7 +196,7 @@ const tbdShelf = function(shelf) {
     return div
 }
 
-const editRack = function(rack) {
+const editRack = function(rack, config) {
 
     const rackId = rack['_id']
     
@@ -206,30 +206,6 @@ const editRack = function(rack) {
 
     options_div.removeChild(edit_btn)
     options_div.removeChild(add_btn)
-
-    const save_btn = document.createElement('button')
-    save_btn.setAttribute('class', 'btn btn-success')
-    save_btn.setAttribute('style', 'float: right')
-    save_btn.setAttribute('id', rackId+'-save-btn')
-    save_btn.onclick = function() { alert('save') }
-    save_btn.innerHTML = 'Save'
-    options_div.appendChild(save_btn)
-
-    const cancel_btn = document.createElement('button')
-    cancel_btn.setAttribute('class', 'btn btn-secondary')
-    cancel_btn.setAttribute('style', 'float: right; margin-right: 10px')
-    cancel_btn.setAttribute('id', rackId+'-cancel-btn')
-    cancel_btn.onclick = function() { alert('cancel') }
-    cancel_btn.innerHTML = 'Cancel'
-    options_div.appendChild(cancel_btn)
-
-    const delete_btn = document.createElement('button')
-    delete_btn.setAttribute('class', 'btn btn-danger')
-    delete_btn.setAttribute('style', 'float: left; margin-right: 10px')
-    delete_btn.setAttribute('id', rackId+'-delete-btn')
-    delete_btn.onclick = function() { deleteRack(rack) }
-    delete_btn.innerHTML = 'Delete'
-    options_div.appendChild(delete_btn)
 
     const header = document.getElementById(rackId+'-header')
     const h5 = document.getElementById(rackId+'-header-h5')
@@ -258,12 +234,120 @@ const editRack = function(rack) {
     input_div.appendChild(input)
 
     header.appendChild(input_div)
-    console.log(edit_btn)
-    console.log(add_btn)
+
+    const save_btn = document.createElement('button')
+    save_btn.setAttribute('class', 'btn btn-success')
+    save_btn.setAttribute('style', 'float: right')
+    save_btn.setAttribute('id', rackId+'-save-btn')
+    save_btn.onclick = function() { saveRack(rack, input.value, edit_btn, add_btn, h5, input_div) }
+    save_btn.innerHTML = 'Save'
+    options_div.appendChild(save_btn)
+
+    const cancel_btn = document.createElement('button')
+    cancel_btn.setAttribute('class', 'btn btn-secondary')
+    cancel_btn.setAttribute('style', 'float: right; margin-right: 10px')
+    cancel_btn.setAttribute('id', rackId+'-cancel-btn')
+    cancel_btn.onclick = function() { cancelRack(rack, edit_btn, add_btn, h5, input_div) }
+    cancel_btn.innerHTML = 'Cancel'
+    options_div.appendChild(cancel_btn)
+
+    const delete_btn = document.createElement('button')
+    delete_btn.setAttribute('class', 'btn btn-danger')
+    delete_btn.setAttribute('style', 'float: left; margin-right: 10px')
+    delete_btn.setAttribute('id', rackId+'-delete-btn')
+    delete_btn.onclick = function() { deleteRack(rack) }
+    delete_btn.innerHTML = 'Delete'
+    options_div.appendChild(delete_btn)
+
+    
+    
+    const shelves = rack['shelves']
+    for (var i = 0; i < shelves.length; i++) {
+        const shelfId = shelves[i]
+
+        const shelf_options_div = document.getElementById(shelfId+'-options-div')
+        
+        const btn = document.createElement('button')
+        btn.setAttribute('style', 'float: left; margin-bottom: 15px; margin-left: 15px')
+        btn.setAttribute('class', 'btn btn-danger')
+        btn.setAttribute('id', shelfId+'-delete-btn')
+        btn.onclick = function() { deleteShelf(rack, config, shelfId) }
+        btn.innerHTML = 'remove'
+
+        shelf_options_div.removeChild(document.getElementById(shelfId+'-configure-btn'))
+        shelf_options_div.appendChild(btn)
+    }
+
 }
 
-const cancelEdit = function() {
+const saveRack = function(rack, newName,  edit_btn, add_btn, h5, input_div) {
+    if (newName.length == 0) {
+        cancelRack(rack, edit_btn, add_btn, h5, input_div)
+    }else{
+        const options = {
+            method: 'PUT',
+            body: new URLSearchParams({_id: rack['_id'], name: newName})
+        };
+        fetch('/config/rack/name', options)
+            .then(response => response.json())
+            .then(response => rackSaved(response, edit_btn, add_btn, h5, input_div))
+            .catch(err => alert('unable to save pwm ' + err));
+    }
+}
+
+const rackSaved = function(rack, edit_btn, add_btn, h5, input_div) {
+    h5.innerHTML = '[Rack]: ' + rack['name']
+    cancelRack(rack, edit_btn, add_btn, h5, input_div)
+}
+
+const deleteShelf = function(rack, config, shelfId) {
+    let isExecuted = confirm("Are you sure you want to delete this shelf?");
+    if (!isExecuted) {
+        return
+    }
+    fetch('/config/shelf/' + shelfId, {method: 'DELETE'})
+        .then(response => response.json())
+        .then(shelf => {
+            rack['shelves'].splice(rack['shelves'].indexOf(shelf['_id']), 1)
+            const rack_div = document.getElementById(rack['_id']+'-body')
+            const shelf_div = document.getElementById(shelf['_id']+'-root')
+            rack_div.removeChild(shelf_div)
+        })
+        .catch(err => alert('unable to delete shelf ' + err))
+}
+
+const cancelRack = function(rack, edit_btn, add_btn, h5, input_div) {
     
+    const rackId = rack['_id']
+
+    const options_div = document.getElementById(rackId+'-options-div')
+    
+    options_div.removeChild(document.getElementById(rackId+'-save-btn'))
+    options_div.removeChild(document.getElementById(rackId+'-cancel-btn'))
+    options_div.removeChild(document.getElementById(rackId+'-delete-btn'))
+
+    const shelves = rack['shelves']
+    for (var i = 0; i < shelves.length; i++) {
+        const shelfId = shelves[i]
+        const shelf_options_div = document.getElementById(shelfId+'-options-div')
+        const delete_btn = document.getElementById(shelfId+'-delete-btn')
+        shelf_options_div.removeChild(delete_btn)
+
+        const configure_btn = document.createElement('button')
+        configure_btn.setAttribute('class', 'btn btn-link')
+        configure_btn.setAttribute('style', 'float: right;')
+        configure_btn.setAttribute('id', shelfId+'-configure-btn')
+        configure_btn.onclick = function() { alert('configure shelf') }
+        configure_btn.innerHTML = 'Configure'
+        shelf_options_div.appendChild(configure_btn)
+    }
+
+    options_div.appendChild(edit_btn)
+    options_div.appendChild(add_btn)
+
+    const header = document.getElementById(rackId+'-header')
+    header.removeChild(input_div)
+    header.appendChild(h5)
 }
 
 const deleteRack = function(rack) {
@@ -280,18 +364,21 @@ const deleteRack = function(rack) {
         .catch(err => alert('unable to delete rack ' + err))
 }
 
-const addNewShelf = function(rackId, body, options_div) {
+const addNewShelf = function(rack, config, body, options_div) {
     const options = {
         method: 'POST',
-        body: new URLSearchParams({rackId: rackId})
+        body: new URLSearchParams({rackId: rack['_id']})
     };
     
     fetch('/config/shelf', options)
     .then(response => response.json())
     .then(shelf => {
+        rack['shelves'].push(shelf['_id'])
+        config[shelf['_id']] = shelf
         const shelf_root = create_shelf(shelf)
         body.insertBefore(shelf_root, options_div)
     })
     .catch(err => alert('unable to add new shelf ' + err));
 }
+
 
