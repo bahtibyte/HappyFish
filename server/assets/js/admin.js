@@ -48,12 +48,12 @@ top_div.appendChild(pwm_div)
 bot_div.appendChild(rack_btn_div)
 bot_div.appendChild(rack_div)
 
-loadPwms()
 loadRacks()
+loadPwms()
 
 /* put together both divs into the main tree */
-tree.appendChild(top_div)
 tree.appendChild(bot_div)
+tree.appendChild(top_div)
 
 /* render the full admin dashboard in the root div */
 document.getElementById('root').appendChild(tree)

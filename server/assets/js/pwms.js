@@ -33,7 +33,8 @@ const loadNewPwm = function(pwm) {
     
     /* rerenders the admin dashboard */
     document.getElementById('root').removeChild(top_div)
-    document.getElementById('root').insertBefore(top_div, bot_div)
+    document.getElementById('root').appendChild(top_div)
+    
     return false;
 }
 
@@ -229,6 +230,7 @@ const savePwm = function(pI, pwm, newName, h5, input_div) {
 
 const pwmSaved = function(pI, pwm, h5, input_div) {
     h5.innerHTML = '[0x' + (40+pI) + ']: ' + pwm['name']
+    last_config[pwm['_id']] = pwm
     cancelPwm(pI, pwm, h5, input_div)
 }
 
