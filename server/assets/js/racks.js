@@ -25,12 +25,12 @@ const load = function(config) {
     console.log('loading')
     console.log(config)
 
+    last_config = config
     const racks = config['racks']
     for (var i = 0; i < racks.length; i++) {
         const root = create_rack(config[racks[i]], config)
         rack_div.appendChild(root)
     }
-    last_config = config
 }
 
 const create_rack = function(rack, config) {
@@ -168,8 +168,6 @@ const create_shelf = function(shelf) {
 
 const configureShelf = function(shelf) {
     
-    console.log(shelf)
-    
     const shelfId = shelf['_id']
 
     const shelf_body = document.getElementById(shelfId+'-body')
@@ -180,10 +178,10 @@ const configureShelf = function(shelf) {
 
     options_div.removeChild(configure_btn)
 
+    console.log(shelf_body)
+    console.log(old_div)
     shelf_body.removeChild(old_div)
     shelf_body.removeChild(options_div)
-
-
 
     const header = document.getElementById(shelfId+'-header')
     const h5 = document.getElementById(shelfId+'-header-h5')
@@ -212,7 +210,6 @@ const configureShelf = function(shelf) {
     input_div.appendChild(shelf_name)
 
     header.appendChild(input_div)
-
 
     const new_div = document.createElement('div')
     new_div.setAttribute('id', shelfId+'-configure-body')
@@ -299,9 +296,6 @@ const configureShelf = function(shelf) {
 }
 
 const saveShelf = function(shelf, newName, configure_btn, h5, input_div, old_div) {
-
-    console.log('new name is '+newName)
-
     const shelfId = shelf['_id']
 
     var kind = 'white'
@@ -314,8 +308,6 @@ const saveShelf = function(shelf, newName, configure_btn, h5, input_div, old_div
             break
         }
     }
-
-    console.log('selected is ' + kind)
 
     const white_pwm = document.getElementById(shelfId+'-white-pwm')
     const rgb_pwm = document.getElementById(shelfId+'-rgb-pwm')
@@ -367,7 +359,10 @@ const saveShelf = function(shelf, newName, configure_btn, h5, input_div, old_div
         }
     }
 
-    const data = {}
+    const data = {
+        '_id': shelfId,
+        'kind': kind
+    }
 
     if (kind == 'white' || kind == 'hybrid') {
         data['pwmIdW'] = white_pwm.value
@@ -376,24 +371,42 @@ const saveShelf = function(shelf, newName, configure_btn, h5, input_div, old_div
 
     if (kind == 'rgb' || kind == 'hybrid') {
         data['pwmIdRGB'] = rgb_pwm.value
-        data['rAddr'] = white_addr
-        data['gAddr'] = red_addr
-        data['bAddr'] = green_addr
+        data['rAddr'] = red_addr
+        data['gAddr'] = green_addr
+        data['bAddr'] = blue_addr
     }
 
+    const options = {
+        method: 'PUT',
+        body: new URLSearchParams(data)
+    };
+
+    fetch('/config/shelf/addr', options)
+        .then(response => response.json())
+        .then(shelf => { shelfSaved(shelf, newName, configure_btn, h5, input_div, old_div) })
+        .catch(err => alert('unable to save shelf ' + err));
+
+}
+
+const shelfSaved = function(shelf, newName, configure_btn, h5, input_div, old_div) {
+    pwmDeleted()
+    last_config[shelf['_id']] = shelf
     if (newName.length == 0) {
-        //cancelRack(rack, edit_btn, add_btn, h5, input_div)
+        cancelShelf(shelf, configure_btn, h5, input_div, old_div) 
     }else{
-        /*
         const options = {
             method: 'PUT',
-            body: new URLSearchParams({_id: rack['_id'], name: newName})
+            body: new URLSearchParams({_id: shelf['_id'], name: newName})
         };
-        fetch('/config/rack/name', options)
+
+        fetch('/config/shelf/name', options)
             .then(response => response.json())
-            .then(response => rackSaved(response, edit_btn, add_btn, h5, input_div))
-            .catch(err => alert('unable to save rack ' + err));
-        */
+            .then(shelf => {
+                last_config[shelf['_id']] = shelf
+                h5.innerHTML = '[Shelf]: ' + shelf['name']
+                cancelShelf(shelf, configure_btn, h5, input_div, old_div) 
+            })
+            .catch(err => alert('cant save shelf name ' + err));
     }
 }
 
@@ -621,7 +634,9 @@ const cancelShelf = function(shelf, configure_btn, h5, input_div, old_div) {
 
     const configure_body = document.getElementById(shelfId+'-configure-body')
     shelf_body.removeChild(configure_body)
-    shelf_body.insertBefore(old_div, options_div)
+
+    const new_shelf_div = generateShelf(shelf)
+    shelf_body.insertBefore(new_shelf_div, options_div)
 
 }
 
@@ -630,9 +645,162 @@ const generateShelf = function(shelf) {
     if (shelf['kind'] == 'tbd')
         return tbdShelf(shelf)
 
-    const p = document.createElement('p')
-    p.innerHTML = 'unsupported'
-    return p
+    const shelfId = shelf['_id']
+
+    const new_div = document.createElement('div')
+    new_div.setAttribute('id', shelfId+'-shelf-body-div')
+    new_div.setAttribute('style', 'margin: 10px 10px 10px 10px')
+
+    const radio_div = document.createElement('div')
+    radio_div.setAttribute('class', 'input-group mb-3')
+    radio_div.setAttribute('id', shelfId+'-radio-div')
+
+    const kinds_div = document.createElement('div')
+    kinds_div.setAttribute('class', 'form-control')
+
+    const span = document.createElement('span')
+    span.setAttribute('class', 'input-group-text')
+    span.setAttribute('id', shelfId+'-kind-span')
+    span.innerHTML = 'kind'
+
+    const label = document.createElement('label')
+    label.innerHTML = shelf['kind']
+
+    kinds_div.appendChild(label)
+
+    radio_div.appendChild(span)
+    radio_div.appendChild(kinds_div)
+
+    //new_div.appendChild(radio_div)
+
+    if (shelf['kind'] == 'white' || shelf['kind'] == 'hybrid') {
+
+        const div = document.createElement('div')
+        div.setAttribute('class', 'form-control mb-3')
+        div.setAttribute('id', shelfId+'-white-configure-div')
+
+        const pwm_div = document.createElement('div')
+        pwm_div.setAttribute('class', 'input-group mb-3')
+
+        const pwm_span = document.createElement('span')
+        pwm_span.setAttribute('class', 'input-group-text')
+        pwm_span.setAttribute('id', shelfId+'-white-pwm-span')
+        pwm_span.setAttribute('style', 'width: 60px')
+        pwm_span.innerHTML = 'pwm:'
+
+        const pwm_select = document.createElement('select')
+        pwm_select.setAttribute('class', 'form-control form-select')
+        pwm_select.setAttribute('id', shelfId+'-white-pwm')
+        
+        const option = document.createElement('option')
+        var i = last_config['pwms'].indexOf(shelf['pwmIdW'])
+        option.innerHTML = '[0x' + (40+i) + ']: ' + last_config[shelf['pwmIdW']]['name']
+
+        pwm_select.appendChild(option)
+        
+        pwm_div.appendChild(pwm_span)
+        pwm_div.appendChild(pwm_select)
+
+        const addr_div = document.createElement('div')
+        addr_div.setAttribute('class', 'input-group mb-3')
+
+        const addr_span = document.createElement('span')
+        addr_span.setAttribute('class', 'input-group-text')
+        addr_span.setAttribute('id', shelfId+'-white-addr-span')
+        addr_span.setAttribute('style', 'width: 110px')
+        addr_span.innerHTML = 'white addr:'
+
+        const addr_select = document.createElement('select')
+        addr_select.setAttribute('class', 'form-control form-select')
+        addr_select.setAttribute('style', 'width: auto')
+        addr_select.setAttribute('id', shelfId+'-white-select')
+
+        const addr_option = document.createElement('option')
+        addr_option.innerHTML = shelf['wAddr']
+
+        addr_select.appendChild(addr_option)
+
+        pwm_select.disabled = true
+        addr_select.disabled = true
+
+        addr_div.appendChild(addr_span)
+        addr_div.appendChild(addr_select)
+
+        div.appendChild(pwm_div)
+        div.appendChild(addr_div)
+
+        new_div.appendChild(div)
+    }
+
+    
+    if (shelf['kind'] == 'rgb' || shelf['kind'] == 'hybrid') {
+
+        const div = document.createElement('div')
+        div.setAttribute('class', 'form-control mb-3')
+        div.setAttribute('id', shelfId+'-rgb-configure-div')
+
+        const pwm_div = document.createElement('div')
+        pwm_div.setAttribute('class', 'input-group mb-3')
+
+        const pwm_span = document.createElement('span')
+        pwm_span.setAttribute('class', 'input-group-text')
+        pwm_span.setAttribute('id', shelfId+'-rgb-pwm-span')
+        pwm_span.setAttribute('style', 'width: 60px')
+        pwm_span.innerHTML = 'pwm:'
+
+        const pwm_select = document.createElement('select')
+        pwm_select.setAttribute('class', 'form-control form-select')
+        pwm_select.setAttribute('id', shelfId+'-rgb-pwm')
+        
+        const option = document.createElement('option')
+        var i = last_config['pwms'].indexOf(shelf['pwmIdRGB'])
+        option.innerHTML = '[0x' + (40+i) + ']: ' + last_config[shelf['pwmIdRGB']]['name']
+
+        pwm_select.appendChild(option)
+        
+        pwm_div.appendChild(pwm_span)
+        pwm_div.appendChild(pwm_select)
+
+        pwm_select.disabled = true
+        div.appendChild(pwm_div)
+
+        const colors = ['red', 'green', 'blue']
+        for (var i = 0; i < colors.length; i++) {
+            const color = colors[i]
+
+            const addr_div = document.createElement('div')
+            addr_div.setAttribute('class', 'input-group mb-3')
+    
+            const addr_span = document.createElement('span')
+            addr_span.setAttribute('class', 'input-group-text')
+            addr_span.setAttribute('id', shelfId+'-'+color+'-addr-span')
+            addr_span.setAttribute('style', 'width: 110px')
+            addr_span.innerHTML = color+' addr:'
+    
+            const addr_select = document.createElement('select')
+            addr_select.setAttribute('class', 'form-control form-select')
+            addr_select.setAttribute('style', 'width: auto')
+            addr_select.setAttribute('id', shelfId+'-'+color+'-select')
+    
+            const addr_option = document.createElement('option')
+            addr_option.innerHTML = shelf[color[0]+'Addr']
+    
+            addr_select.appendChild(addr_option)
+    
+            addr_select.disabled = true
+    
+            addr_div.appendChild(addr_span)
+            addr_div.appendChild(addr_select)
+    
+            div.appendChild(addr_div)
+    
+        }
+        
+        new_div.appendChild(div)
+    }
+
+
+    return new_div
 }
 
 const tbdShelf = function(shelf) {
@@ -771,6 +939,11 @@ const deleteShelf = function(rack, config, shelfId) {
             const rack_div = document.getElementById(rack['_id']+'-body')
             const shelf_div = document.getElementById(shelf['_id']+'-root')
             rack_div.removeChild(shelf_div)
+            
+            if (shelf['kind'] != 'tbd') {
+                console.log('refresh pwm deleted???')
+                pwmDeleted()
+            }
         })
         .catch(err => alert('unable to delete shelf ' + err))
 }

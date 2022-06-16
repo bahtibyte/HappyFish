@@ -4,12 +4,12 @@ const loadPwms = function() {
     fetch('/api/config', { method: 'GET' })
         .then(response => response.json())
         .then(config => {
+            last_config = config
             const pwms = config['pwms']
             for (var i = 0; i < pwms.length; i++) {
                 const root = create_pwm(i, config[pwms[i]], config)
                 pwm_div.appendChild(root)
             }
-            last_config = config
         })
         .catch(err => alert('unable to load configs '+err));
 }
@@ -34,7 +34,7 @@ const loadNewPwm = function(pwm) {
     /* rerenders the admin dashboard */
     document.getElementById('root').removeChild(top_div)
     document.getElementById('root').appendChild(top_div)
-    
+
     return false;
 }
 
