@@ -514,9 +514,9 @@ const tbdShelf = function(shelf, input) {
 }
 
 const rgbSlider = function(shelf, input, color) {
-    const r = color == 'r' ? input.value : shelf['rValue']
-    const g = color == 'g' ? input.value : shelf['gValue']
-    const b = color == 'b' ? input.value : shelf['bValue']
+    const r = color == 'r' ? input.value : last_config[shelf['_id']]['rValue']
+    const g = color == 'g' ? input.value : last_config[shelf['_id']]['gValue']
+    const b = color == 'b' ? input.value : last_config[shelf['_id']]['bValue']
     data = {
         _id: shelf['_id'],
         rValue: r,
@@ -530,6 +530,7 @@ const rgbSlider = function(shelf, input, color) {
     fetch('/api/shelf/value', options)
     .then(response => response.json())
     .then(shelf => { 
+        last_config[shelf['_id']] = shelf
         document.getElementById(shelf['_id']+'-range-label-'+color).innerHTML = full[color] + ': ' + input.value
         input.value = shelf[color+'Value'] 
     })
@@ -544,6 +545,7 @@ const whiteSlider = function(shelf, input) {
     fetch('/api/shelf/value', options)
     .then(response => response.json())
     .then(shelf => { 
+        last_config[shelf['_id']] = shelf
         document.getElementById(shelf['_id']+'-range-label').innerHTML = 'LED Brightness: ' + input.value + '%'
         input.value = shelf['wValue'] 
     })
@@ -559,6 +561,7 @@ const whiteModeSelected = function(shelf, mode) {
     fetch('/api/shelf/mode', options)
     .then(response => response.json())
     .then(shelf => {
+        last_config[shelf['_id']] = shelf
         const body = document.getElementById(shelf['_id']+'-body')
         const body_div = document.getElementById(shelf['_id']+'-shelf-body-div')
         body.removeChild(body_div)
@@ -577,6 +580,7 @@ const rgbModeSelected = function(shelf, mode) {
     fetch('/api/shelf/mode', options)
     .then(response => response.json())
     .then(shelf => {
+        last_config[shelf['_id']] = shelf
         const body = document.getElementById(shelf['_id']+'-body')
         const body_div = document.getElementById(shelf['_id']+'-shelf-body-div')
         body.removeChild(body_div)
