@@ -14,29 +14,31 @@ const index = async (req, res) => {
   }
 };
 
-// TODO: add auth behind this
+
 const admin = async (req, res) => {
     res.sendFile(path.resolve(__dirname, '../public/admin.html'))
 }
 
-const admin2 = async (req, res) => {
-    res.sendFile(path.resolve(__dirname, '../public/admin2.html'))
-}
-
-const admin3 = async (req, res) => {
-    res.sendFile(path.resolve(__dirname, '../public/admin3.html'))
+const adminOLD = async (req, res) => {
+    res.sendFile(path.resolve(__dirname, '../public/dashboard.html'))
 }
 
 const login = async (req, res) => {
-  if (req.body.username == myusername && req.body.password == mypassword) {
-    var session = req.session;
-    session.userid = req.body.username;
-    console.log(req.session);
+  try {
+    console.log('Login attempt ' + JSON.stringify(req.body))
 
-    res.redirect("/");
-  } else {
-    // make this redirect to root with invalid login message
-    res.send("Invalid username or password");
+    if (req.body.username == req.body.password) {
+      var session = req.session;
+      session.userid = req.body.username;
+      console.log(req.session);
+  
+      res.redirect("/");
+    } else {
+      res.send("Invalid username or password");
+    }
+  } catch (err) {
+    console.log(error)
+    return res.status(400).json({'error': 'exception thrown'})
   }
 };
 
@@ -49,7 +51,7 @@ const adminAuth = async (req, res, next) => {
   const session = req.session;
 
     if (!session.userid || session.userid != 'admin') {
-        //return res.status(401).json({'error': 'Unauthorized'})
+        return res.status(401).json({'error': 'Unauthorized'})
     }
 
   next();
@@ -57,9 +59,8 @@ const adminAuth = async (req, res, next) => {
 
 const dashboard = async (req, res, next) => {
     const session = req.session;
-
-    if (!session.userid || session.userid != 'admin' || session.userid != 'student') {
-        //return res.status(401).json({'error': 'Unauthorized'})
+    if (!session.userid || (session.userid != 'admin' && session.userid != 'student')) {
+        return res.status(401).json({'error': 'Unauthorized'})
     }
 
     next();
@@ -86,5 +87,11 @@ module.exports = {
     dashboard,
     adminAuth,
     clientAuth,
-    admin3
+    adminOLD
 };
+
+
+
+
+
+

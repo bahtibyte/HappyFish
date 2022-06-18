@@ -11,8 +11,10 @@ const shelfController = require('../controllers/shelf')
 router.get('/', authController.index)
 router.post('/login', authController.login)
 router.get('/logout', authController.logout)
+
+router.get('/admin', authController.adminAuth)
 router.get('/admin', authController.admin)
-router.get('/admin3', authController.admin3)
+router.get('/adminOLD', authController.adminOLD)
 
 /* Admin and Student interaction with shelf values */
 router.put('/api/shelf/mode', authController.dashboard, apiController.modeChange)

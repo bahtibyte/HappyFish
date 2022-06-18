@@ -22,18 +22,18 @@ def log_setup():
 
 logger = log_setup()
 
-logger.info('Starting main.py')
+print('Starting main.py')
 
 hf = HappyFish(logger)
 hf.start()
 
 if hf.CANT_START:
-    logger.error('INITIAL SERVER REQUEST UNRESPONSIVE')
+    print('INITIAL SERVER REQUEST UNRESPONSIVE')
 
 elif hf.BAD_CONFIG:
-    logger.error('UNABLE TO INITIALIZE PWM MODULES')
+    print('UNABLE TO INITIALIZE PWM MODULES')
 
 elif hf.REFRESH:
-    logger.info('CLIENT CONFIGURATION REFRESH REQUESTED')
+    print('CLIENT CONFIGURATION REFRESH REQUESTED')
 
-logger.info('Terminating main.py')
+print('Terminating main.py')

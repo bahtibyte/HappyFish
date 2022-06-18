@@ -61,6 +61,8 @@ const syncdNotify = async (req, res) => {
 
 const modeChange = async (req, res) => {
 
+    console.log(JSON.stringify(req.body))
+
     if (!req.body._id) 
         return res.status(400).json({'error': 'missing shelf _id'})
     
@@ -97,7 +99,7 @@ const modeChange = async (req, res) => {
             doc.bValue = 0
         }
 
-        doc.mode = 0
+        doc.mode = mode
         await doc.save()
         return res.status(201).json(doc) 
     }

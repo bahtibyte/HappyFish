@@ -12,19 +12,47 @@
       integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
       crossorigin="anonymous"
     />
+    <link href="/css/style.css" rel="stylesheet" />
+
+    <!-- Bootstrap core css -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet"/>
 
     <!-- Custom styles for this template -->
-    <link href="/css/background.css" rel="stylesheet" />
-
-    <!-- External custom javascript -->
-    <script src="/js/loader.js" async></script>
+    <link href="css/styles.css" rel="stylesheet" />
   </head>
 
   <body>
-    <h1>Welcome</h1>
-    <p>You are currently logged in</p>
+    <div id="root" class=" bg-secondary" style="max-width: 1170px; margin: auto;">
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="">
+            <a class="navbar-brand" href="/">
+            <img src="/images/fish.png" alt="" width="30" height="24" class="d-inline-block"/>HappyFish 
+            </a>
+            <a class="navbar-brand btn" href="/admin"> Admin </a>
+            <a class="navbar-brand btn" href="/logout"> Logout </a>
+          </div>
+      </nav>
+    </div>
 
-    <p>For admin settings, <a href="/admin">click here</a></p>
-    <p>To logout, <a href="/logout">click to logout</a></p>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="/js/dashboard.js"></script>
+    <script>
+        const tree = document.createDocumentFragment();
+
+        const root_div = document.createElement('div')
+        root_div.setAttribute('id', 'root-div')
+
+        const rack_div = document.createElement('div')
+        rack_div.setAttribute('class', 'racks card-deck')
+        rack_div.setAttribute('id', 'racks')
+
+        root_div.appendChild(rack_div)
+
+        loadDashboard()
+
+        tree.appendChild(root_div)
+
+        document.getElementById('root').appendChild(tree)
+    </script>
   </body>
 </html>
