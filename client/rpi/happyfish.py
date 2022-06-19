@@ -63,10 +63,6 @@ class HappyFish:
             
             sleep(1)
 
-            n += 1
-            if n > 3:
-                break
-
     def send_pwm_signals(self):
         print('sending signals now')
 
@@ -82,7 +78,14 @@ class HappyFish:
                 if shelfId != None:
                     shelf = self.config[shelfId]
 
-                    value = self.get_value(shelf, addr)
+                    if shelf['kind'] == 'white':
+                        if shelf['mode'] == 0:
+                            value = int(self.MAX_VALUE * self.schedule.getBrightnessPercentage())
+                        else:
+                            value = self.get_value(shelf, addr)
+                        
+                    elif shelf['kind'] == 'rgb' and shelf['mode'] != 0:
+                        value = self.get_value(shelf, addr)
 
                 print('\t', addr, value)
                 module.channels[j].duty_cycle = value
