@@ -22,13 +22,39 @@ const reset = async(req, res) => {
 
 const configs = async(req, res) => {
     const docs = await esp32.find()
-    var today = new Date();
     const doc = docs[0] 
+    const today = new Date();
     doc['tod'] =  today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
     return res.status(201).json(docs)
 }
 
+const dashboard = async(req, res) => {
+    res.sendFile(path.resolve(__dirname, "../public/esp32.html"));
+}
+
+const save = async (req, res) => {
+
+    if (!req.body.pin || !req.body.value) 
+        return res.status(400).json({'error': 'missing pin / value'})
+
+    const pin = req.body.pin
+    if (pin != 'r' || pin != 'g' || pin != 'b')
+        return res.status(400).json({'error': 'invalid pin'})
+
+    const docs = await esp32.find()
+    const doc = docs[0] 
+
+    doc[pin+'Value'] = req.body.value
+
+    await doc.save()
+
+    return res.status(201).json(doc)
+}
+
+
 module.exports = {
     reset,
-    configs
+    configs,
+    dashboard,
+    save
 }

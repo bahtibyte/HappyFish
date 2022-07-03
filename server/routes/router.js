@@ -51,5 +51,6 @@ router.put('/api/config/syncd', authController.clientAuth, apiController.syncdNo
 /* ESP32 Project */
 router.get('/esp32/reset', esp32Controller.reset)
 router.get('/esp32/config', esp32Controller.configs)
+router.get('/esp32/dashboard', esp32Controller.dashboard)
 
 module.exports = router

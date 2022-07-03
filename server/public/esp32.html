@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ESP IOT DASHBOARD</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    <div class="topnav">
+        <h1>Multiple Sliders</h1>
+    </div>
+    <div class="content">
+        <div class="card-grid">
+            <div class="card">
+                <p class="card-title">Fader R</p>
+                <p class="switch">
+                    <input type="range" onchange="updateSliderPWM(this)" id="sliderr" min="0" max="255" step="1" value ="0" class="slider">
+                </p>
+                <p class="state">Brightness: <span id="sliderValuer"></span> &percnt;</p>
+            </div>
+            <div class="card">
+                <p class="card-title"> Fader G</p>
+                <p class="switch">
+                    <input type="range" onchange="updateSliderPWM(this)" id="sliderg" min="0" max="255" step="1" value ="0" class="slider">
+                </p>
+                <p class="state">Brightness: <span id="sliderValueg"></span> &percnt;</p>
+            </div>
+            <div class="card">
+                <p class="card-title"> Fader B</p>
+                <p class="switch">
+                    <input type="range" onchange="updateSliderPWM(this)" id="sliderb" min="0" max="255" step="1" value ="0" class="slider">
+                </p>
+                <p class="state">Brightness: <span id="sliderValueb"></span> &percnt;</p>
+            </div>
+        </div>
+    </div>
+    <script>
+
+        function updateSliderPWM(element) {
+            var sliderNumber = element.id.charAt(element.id.length-1);
+            var sliderValue = document.getElementById(element.id).value;
+            document.getElementById("sliderValue"+sliderNumber).innerHTML = sliderValue;
+            console.log('value ' + sliderValue);
+
+            const options = {
+                method: 'POST',
+                body: new URLSearchParams({pin: 'r', value: '200'})
+            };
+
+            fetch('/esp32/save', options)
+                .then(response => response.json())
+                .then(response => console.log(response))
+                .catch(err => console.error(err));
+        }
+
+    </script>
+</body>
+</html>
