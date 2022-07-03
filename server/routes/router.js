@@ -6,6 +6,7 @@ const apiController = require('../controllers/api')
 const pwmController = require('../controllers/pwm') 
 const rackController = require('../controllers/rack')
 const shelfController = require('../controllers/shelf')
+const esp32Controller = require('../controllers/esp32')
 
 /* Serves HTML files to user */
 router.get('/', authController.index)
@@ -46,5 +47,8 @@ router.get('/api/config', apiController.config)
 
 /* Client requesting server modification */
 router.put('/api/config/syncd', authController.clientAuth, apiController.syncdNotify)
+
+/* ESP32 Project */
+router.get('/esp32/reset', esp32Controller.reset)
 
 module.exports = router
