@@ -35,11 +35,14 @@ const dashboard = async(req, res) => {
 
 const save = async (req, res) => {
 
+    console.log('incoming data')
+    console.log(JSON.stringify(req.body))
+
     if (!req.body.pin || !req.body.value) 
         return res.status(400).json({'error': 'missing pin / value'})
 
     const pin = req.body.pin
-    if (pin != 'r' || pin != 'g' || pin != 'b')
+    if (pin != 'r' && pin != 'g' && pin != 'b')
         return res.status(400).json({'error': 'invalid pin'})
 
     const docs = await esp32.find()

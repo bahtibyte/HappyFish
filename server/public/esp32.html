@@ -43,7 +43,7 @@
 
             const options = {
                 method: 'POST',
-                body: new URLSearchParams({pin: 'r', value: '200'})
+                body: new URLSearchParams({pin: sliderNumber, value: sliderValue})
             };
 
             fetch('/esp32/save', options)
