@@ -23,8 +23,9 @@ const reset = async(req, res) => {
 const configs = async(req, res) => {
     const docs = await esp32.find()
     var today = new Date();
-    docs['tod'] =  today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-    return res.status(201).json(docs[0])
+    const doc = docs[0] 
+    doc['tod'] =  today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    return res.status(201).json(docs)
 }
 
 module.exports = {
