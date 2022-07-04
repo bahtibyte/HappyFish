@@ -26,7 +26,7 @@ const configs = async(req, res) => {
     const doc = docs[0] 
     const today = new Date();
     doc['tod'] =  today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-    return res.status(201).json(docs)
+    return res.status(201).json(doc)
 }
 
 const dashboard = async(req, res) => {
