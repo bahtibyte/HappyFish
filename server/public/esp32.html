@@ -90,7 +90,7 @@
           method: "GET",
         };
 
-        fetch("http://localhost:8080/esp32/config", options)
+        fetch("/esp32/config", options)
           .then((response) => response.json())
           .then((response) => {
             config = response;
