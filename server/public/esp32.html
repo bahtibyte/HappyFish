@@ -1,57 +1,259 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>ESP IOT DASHBOARD</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-</head>
-<body>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+
+  <body onload="getConfig();">
+    <div class="clock">
+      <h4>Current server time:</h4>
+      <p id="clock"></p>
+      <h4>Current UTC time:</h4>
+      <p id="clock-utc"></p>
+      <h4>Current NYC time:</h4>
+      <p id="clock-edt"></p>
+    </div>
+
+    <div class="modes">
+      <h1>Automatic modes</h1>
+      <p>Calculated based off utc time. EX: 12/12 = 8:00am - 8:00pm utc</p>
+      <p>In NYC time = 4:00am - 4:00pm during Daylight savings time and 5:00am - 5:00pm Eastern time</p>
+      <div class="card-grid">
+        <!-- <input type="radio" id="12/12" name="automatic" value="12/12" />
+        <label for="html">12/12 : 8:00am / 8:00pm utc</label><br />
+
+        <input type="radio" id="18/6" name="automatic" value="18/6" />
+        <label for="css">18/6 : </label><br /> -->
+
+        <div class = "custom">
+            <input type="radio" id="javascript" name="automatic" value="Custom" checked="checked" />
+            <label for="javascript"></label><span id="customTime"></span></label><br />
+        </div>
+
+        <!------------- custom start/end times  ------------->
+        <p>Set time with format:    hh:mm</p>
+
+        <label for="javascript">Custom start lighting up</label>
+        <input type="text" id="customStart"  placeHolder = "hh:mm" class="textInput" />
+
+        <label for="javascript">Custom start dimming down</label>
+        <input type="text" id="customEnd"  placeHolder = "hh:mm" class="textInput" />
+
+        <button onClick="saveCustom()">Save</button><br>
+
+        <!------------- duration ------------->
+        <label for="javascript">Change Duration in minutes</label>
+        <input type="text" id="durationInput"  placeHolder = "mm" class="textInput" />
+        <button onClick="saveDuration()">Save</button><br>
+
+        <input type="range" onchange="updateDuration(this)" id="durationSlider" min="0" max="180" step="1" value="0" class="slider" />
+        <p class="state">Duration Time: <span id="durationValue"></span></p>
+      </div>
+    </div>
+
+    <!-- ------------------------sliders below ----------------// -->
     <div class="topnav">
-        <h1>Multiple Sliders</h1>
+      <h1>Multiple Sliders</h1>
     </div>
     <div class="content">
-        <div class="card-grid">
-            <div class="card">
-                <p class="card-title">Fader R</p>
-                <p class="switch">
-                    <input type="range" onchange="updateSliderPWM(this)" id="sliderr" min="0" max="255" step="1" value ="0" class="slider">
-                </p>
-                <p class="state">Brightness: <span id="sliderValuer"></span> &percnt;</p>
-            </div>
-            <div class="card">
-                <p class="card-title"> Fader G</p>
-                <p class="switch">
-                    <input type="range" onchange="updateSliderPWM(this)" id="sliderg" min="0" max="255" step="1" value ="0" class="slider">
-                </p>
-                <p class="state">Brightness: <span id="sliderValueg"></span> &percnt;</p>
-            </div>
-            <div class="card">
-                <p class="card-title"> Fader B</p>
-                <p class="switch">
-                    <input type="range" onchange="updateSliderPWM(this)" id="sliderb" min="0" max="255" step="1" value ="0" class="slider">
-                </p>
-                <p class="state">Brightness: <span id="sliderValueb"></span> &percnt;</p>
-            </div>
+      <div class="card-grid">
+        <div class="card">
+          <p class="card-title">Fader R</p>
+          <p class="switch">
+            <input type="range" onchange="updateSliderPWM(this)" id="sliderr" min="0" max="255" step="1" value="0" class="slider" />
+          </p>
+          <p class="state">Brightness: <span id="sliderValuer"></span></p>
         </div>
+        <div class="card">
+          <p class="card-title">Fader G</p>
+          <p class="switch">
+            <input type="range" onchange="updateSliderPWM(this)" id="sliderg" min="0" max="255" step="1" value="0" class="slider" />
+          </p>
+          <p class="state">Brightness: <span id="sliderValueg"></span></p>
+        </div>
+        <div class="card">
+          <p class="card-title">Fader B</p>
+          <p class="switch">
+            <input type="range" onchange="updateSliderPWM(this)" id="sliderb" min="0" max="255" step="1" value="0" class="slider" />
+          </p>
+          <p class="state">Brightness: <span id="sliderValueb"></span></p>
+        </div>
+      </div>
     </div>
+
     <script>
+      let config;
 
-        function updateSliderPWM(element) {
-            var sliderNumber = element.id.charAt(element.id.length-1);
-            var sliderValue = document.getElementById(element.id).value;
-            document.getElementById("sliderValue"+sliderNumber).innerHTML = sliderValue;
-            console.log('value ' + sliderValue);
+      function getConfig() {
+        const options = {
+          method: "GET",
+        };
 
-            const options = {
-                method: 'POST',
-                body: new URLSearchParams({pin: sliderNumber, value: sliderValue})
-            };
+        fetch("http://localhost:8080/esp32/config", options)
+          .then((response) => response.json())
+          .then((response) => {
+            config = response;
+            console.log(config);
+            setCustom();
+            setSliderPWM("r");
+            setSliderPWM("g");
+            setSliderPWM("b");
+            setDuration();
+            updateClock();
+          })
+          .catch((err) => console.error(err));
+      }
 
-            fetch('/esp32/save', options)
-                .then(response => response.json())
-                .then(response => console.log(response))
-                .catch(err => console.error(err));
+      function setSliderPWM(number) {
+        //slider number corresponds to the slider colors - r,g, and b
+        var sliderNumber = number;
+        console.log(sliderNumber);
+        var sliderValue = config[sliderNumber + "Value"];
+        console.log(sliderValue);
+
+        //gets slider and sets its value to config value
+        document.getElementById("slider" + sliderNumber).value = sliderValue;
+
+        //gets the span with id of sliderValue+sliderNumber and makes its inner html the slider value mapped to a percentage
+        document.getElementById("sliderValue" + sliderNumber).innerHTML = Math.floor(sliderValue / 2.55) + "% PinValue: " + sliderValue;
+        console.log("value " + sliderValue);
+      }
+
+      function setDuration() {
+        var durationValue = config["duration"];
+        console.log(durationValue);
+
+        //gets slider and sets its value to config value
+        document.getElementById("durationSlider").value = durationValue;
+
+        //gets the span with id of durationValue+sliderNumber and makes its inner html the slider value mapped to a percentage
+        document.getElementById("durationValue").innerHTML = durationValue + " minutes";
+        console.log("value " + durationValue);
+      }
+
+      function setCustom() {
+        var startTime = config["sunrise"];
+        var endTime = config["sunset"];
+
+        //gets the span with id of durationValue+sliderNumber and makes its inner html the slider value mapped to a percentage
+        document.getElementById("customTime").innerHTML = "Custom: "+startTime+"  / "+endTime +" ";
+      }
+
+
+      function saveCustom() {
+        var startTime = document.getElementById("customStart").value;
+        var endTime = document.getElementById("customEnd").value;
+
+        console.log(startTime);
+        console.log(endTime);
+        //gets the span with id of durationValue+sliderNumber and makes its inner html the slider value mapped to a percentage
+        document.getElementById("customTime").innerHTML = "Custom: "+startTime+" / "+endTime;
+
+        const options = {
+          method: "POST",
+          body: new URLSearchParams({
+            sunrise: startTime,
+            sunset: endTime
+          }),
+        };
+
+        fetch("/esp32/saveCustom", options)
+          .then((response) => response.json())
+          .then((response) => console.log(response))
+          .catch((err) => console.error(err));
+      }
+
+      function saveDuration() {
+        var durationValue = document.getElementById("durationInput").value;
+
+        //gets the span with id of durationValue+sliderNumber and makes its inner html the slider value mapped to a percentage
+        document.getElementById("durationValue").innerHTML = durationValue + " minutes";
+        console.log("value " + durationValue);
+
+        const options = {
+          method: "POST",
+          body: new URLSearchParams({
+            duration: durationValue,
+          }),
+        };
+
+        fetch("/esp32/saveDuration", options)
+          .then((response) => response.json())
+          .then((response) => {
+              document.getElementById("durationSlider").value = durationValue;
+              //gets the span with id of durationValue+sliderNumber and makes its inner html the slider value mapped to a percentage
+                document.getElementById("durationValue").innerHTML = durationValue + " minutes";
+                console.log("value " + durationValue);
+                console.log(response);
+            })
+          .catch((err) => console.error(err));
+
+      }
+
+      function updateDuration(element) {
+        var durationValue = document.getElementById(element.id).value;
+
+        //gets the span with id of durationValue+sliderNumber and makes its inner html the slider value mapped to a percentage
+        document.getElementById("durationValue").innerHTML = durationValue + " minutes";
+        console.log("value " + durationValue);
+
+        const options = {
+          method: "POST",
+          body: new URLSearchParams({
+            duration: durationValue,
+          }),
+        };
+
+        fetch("/esp32/saveDuration", options)
+          .then((response) => response.json())
+          .then((response) => console.log(response))
+          .catch((err) => console.error(err));
+      }
+
+      function updateSliderPWM(element) {
+        //slider number corresponds to the slider colors - r,g, and b
+        var sliderNumber = element.id.charAt(element.id.length - 1);
+        console.log(sliderNumber);
+        var sliderValue = document.getElementById(element.id).value;
+
+        //gets the span with id of sliderValue+sliderNumber and makes its inner html the slider value mapped to a percentage
+        document.getElementById("sliderValue" + sliderNumber).innerHTML = Math.floor(sliderValue / 2.55) + "% PinValue: " + sliderValue;
+        console.log("value " + sliderValue);
+
+        const options = {
+          method: "POST",
+          body: new URLSearchParams({
+            pin: sliderNumber,
+            value: sliderValue,
+          }),
+        };
+
+        fetch("/esp32/save", options)
+          .then((response) => response.json())
+          .then((response) => console.log(response))
+          .catch((err) => console.error(err));
+      }
+
+      function updateClock() {
+        var clockElement = document.getElementById("clock");
+        var utcClockElement = document.getElementById("clock-utc");
+        var edtClockElement = document.getElementById("clock-edt");
+
+        function clock() {
+          const today = new Date();
+          clockElement.textContent = today.toString();
+
+          const utc = new Date(today.toUTCString());
+          utcClockElement.textContent = utc.toUTCString();
+
+          const edt = utc.toLocaleString("en-US", { dateStyle: "full", timeStyle: "full" }, { timeZone: "America/New_York" });
+          //edt.setHours(edt.getHours() - 4);
+          edtClockElement.textContent = edt.toString();
         }
 
+        setInterval(clock, 1000);
+      }
     </script>
-</body>
+  </body>
 </html>
