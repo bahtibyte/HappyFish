@@ -7,8 +7,8 @@ const reset = async (req, res) => {
 	if (docs.length == 0) {
 		const newEsp32 = new esp32({
 			tod: "00:00:00",
-			sunrise: "08:00",
-			sunset: "20:00",
+			sunrise: "08:00:00",
+			sunset: "20:00:00",
 			duration: 30,
 			rValue: 0,
 			gValue: 0,
@@ -31,7 +31,10 @@ const config = async (req, res) => {
 	//doc["tod"] = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
 
 	//today.setHours(today.getHours());
-	doc["tod"] = utc.getHours() + ":" + utc.getMinutes() + ":" + utc.getSeconds();
+    var hours =  utc.getHours() < 10 ? "0" +  utc.getHours() :  utc.getHours();
+    var mins =  utc.getMinutes() < 10 ? "0" +  utc.getMinutes() :  utc.getMinutes();
+    var secs =  utc.getSeconds() < 10 ? "0" +  utc.getSeconds() :  utc.getSeconds();
+	doc["tod"] =hours + ":" + mins + ":" + secs;
 
 	return res.status(201).json(doc);
 };
@@ -91,8 +94,8 @@ const saveCustom = async (req, res) => {
 	const doc = docs[0];
 	console.log(doc);
 
-	doc["sunrise"] = req.body.sunrise;
-	doc["sunset"] = req.body.sunset;
+	doc["sunrise"] = req.body.sunrise + ":00";
+	doc["sunset"] = req.body.sunset+ ":00";
 
 	await doc.save();
 
